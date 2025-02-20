@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'Registro/registro.dart';
+import 'Registro/login.dart';
 
 void main() {
   runApp(MyApp());
@@ -38,9 +40,18 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30),
-              buildButton(context, "Sin Registro", Colors.orange, () {}),
-              buildButton(context, "Registrarse", Colors.orange, () {}),
-              buildButton(context, "Login", Colors.orange, () {}),
+              buildButton(context, "Registrarse", Colors.orange, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegistroScreen()),
+                );
+              }),
+              buildButton(context, "Login", Colors.orange, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen(correo: '', password: '')),
+                );
+              }),
             ],
           ),
         ),

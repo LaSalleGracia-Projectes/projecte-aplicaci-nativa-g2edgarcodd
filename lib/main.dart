@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:streamhub/main_view.dart';
+import 'Registro/registro.dart';
+import 'Registro/login.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Menu(),
+      theme: ThemeData(
+        fontFamily: 'Roboto',
+      ),
+      home: HomePage(),
     );
   }
 }

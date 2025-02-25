@@ -207,4 +207,13 @@ class RegistroScreen extends StatelessWidget {
     );
   }
 
+  void showMessage(BuildContext context, String text, Color color) {
+    final snackBar = SnackBar(
+      content: Text(text, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      backgroundColor: color,
+      behavior: SnackBarBehavior.floating,
+      duration: Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }

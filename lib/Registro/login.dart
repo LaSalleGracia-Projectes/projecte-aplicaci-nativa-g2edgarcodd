@@ -67,3 +67,17 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+
+  void verificarCredenciales() {
+    String correoIngresado = correoController.text.trim();
+    String passwordIngresada = passwordController.text.trim();
+
+    if (correoIngresado.isEmpty || passwordIngresada.isEmpty) {
+      showMessage("Información incompleta", Colors.orange);
+    } else if (correoIngresado == widget.correo && passwordIngresada == widget.password) {
+      showMessage("Login exitoso", Colors.green);
+    } else {
+      showMessage("Correo y/o contraseña incorrectos", Colors.red);
+    }
+  }

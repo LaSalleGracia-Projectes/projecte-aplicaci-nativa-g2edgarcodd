@@ -121,3 +121,22 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  Widget buildButton(String text, Color backgroundColor, Color textColor, VoidCallback onPressed) {
+    return SizedBox(
+      width: 200, // Ancho reducido
+      height: 50, // Altura reducida
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12), // Bordes más redondeados
+          ),
+          elevation: 5,
+          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        child: Text(text, style: TextStyle(color: textColor)),
+      ),
+    );
+  }

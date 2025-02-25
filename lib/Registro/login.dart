@@ -81,3 +81,43 @@ class _LoginScreenState extends State<LoginScreen> {
       showMessage("Correo y/o contraseña incorrectos", Colors.red);
     }
   }
+
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    required bool isPassword,
+  }) {
+    return SizedBox(
+      width: 400, // Ancho reducido
+      child: TextField(
+        controller: controller,
+        obscureText: isPassword ? !_passwordVisible : false,
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: Colors.white70),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.1),
+          prefixIcon: Icon(icon, color: Colors.white70),
+          suffixIcon: isPassword
+              ? IconButton(
+            icon: Icon(
+              _passwordVisible ? Icons.visibility : Icons.visibility_off,
+              color: Colors.white70,
+            ),
+            onPressed: () {
+              setState(() {
+                _passwordVisible = !_passwordVisible;
+              });
+            },
+          )
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12), // Bordes más suaves
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+  }

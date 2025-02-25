@@ -30,16 +30,40 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 "Iniciar Sesión",
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 28, // Tamaño de fuente más compacto
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
               SizedBox(height: 25),
+              buildTextField(
+                controller: correoController,
+                label: "Correo Electrónico",
+                icon: Icons.email,
+                isPassword: false,
+              ),
+              SizedBox(height: 12),
+              buildTextField(
+                controller: passwordController,
+                label: "Contraseña",
+                icon: Icons.lock,
+                isPassword: true,
+              ),
+              SizedBox(height: 20),
+              buildButton("Iniciar Sesión", Colors.white, Colors.blue.shade900, () {
+                verificarCredenciales();
+              }),
+              SizedBox(height: 10),
+              buildButton("Salir", Colors.red, Colors.white, () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                      (route) => false,
+                );
+              }),
             ],
           ),
         ),
       ),
     );
   }
-}

@@ -15,82 +15,146 @@ class _PerfilScreenState extends State<PerfilScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mi Perfil', style: TextStyle(color: Colors.white)),
+        title: Text('Mi Perfil', 
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold
+          )
+        ),
         backgroundColor: Color(0xFF060D17),
+        elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Container(
+        width: screenSize.width,
+        height: screenSize.height,
         decoration: BoxDecoration(
           color: Color(0xFF060D17),
+          image: DecorationImage(
+            image: AssetImage('images/logoPrueba.png'),
+            opacity: 0.05,
+            fit: BoxFit.cover,
+          ),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.1),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
-              Stack(
+              SizedBox(height: 30),
+              // Sección de foto de perfil
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.3),
+                      spreadRadius: 5,
+                      blurRadius: 15,
+                    ),
+                  ],
+                ),
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 85,
+                      backgroundColor: Colors.blue.shade900,
+                      child: CircleAvatar(
+                        radius: 80,
+                        backgroundColor: Colors.white.withOpacity(0.1),
+                        backgroundImage: AssetImage('images/logoPrueba.png'),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade900,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.camera_alt, color: Colors.white, size: 25),
+                          onPressed: () {
+                            // Implementar la funcionalidad de cambiar foto
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 40),
+              // Sección de información personal
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 80,
-                    backgroundColor: Colors.white.withOpacity(0.1),
-                    backgroundImage: AssetImage('images/logoPrueba.png'),
+                  // Columna izquierda
+                  Expanded(
+                    child: Column(
+                      children: [
+                        buildTextField(
+                          controller: nombreController,
+                          label: "Nombre",
+                          icon: Icons.person,
+                        ),
+                        SizedBox(height: 20),
+                        buildTextField(
+                          controller: apellidoController,
+                          label: "Apellidos",
+                          icon: Icons.person_outline,
+                        ),
+                      ],
+                    ),
                   ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade900,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        icon: Icon(Icons.camera_alt, color: Colors.white),
-                        onPressed: () {
-                          // Implementar la funcionalidad de cambiar foto
-                        },
-                      ),
+                  SizedBox(width: 40),
+                  // Columna derecha
+                  Expanded(
+                    child: Column(
+                      children: [
+                        buildTextField(
+                          controller: usuarioController,
+                          label: "Nombre de Usuario",
+                          icon: Icons.account_circle,
+                        ),
+                        SizedBox(height: 20),
+                        buildTextField(
+                          controller: correoController,
+                          label: "Correo Electrónico",
+                          icon: Icons.email,
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
+              SizedBox(height: 20),
+              // Contraseña centrada
+              Container(
+                width: screenSize.width * 0.4,
+                child: buildPasswordField(),
+              ),
+              SizedBox(height: 40),
+              // Botones
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buildButton("Guardar Cambios", Colors.white, Colors.blue.shade900, () {
+                    showMessage("Cambios guardados exitosamente", Colors.green);
+                  }),
+                  SizedBox(width: 20),
+                  buildButton("Cancelar", Colors.red, Colors.white, () {
+                    Navigator.pop(context);
+                  }),
+                ],
+              ),
               SizedBox(height: 30),
-              buildTextField(
-                controller: nombreController,
-                label: "Nombre",
-                icon: Icons.person,
-              ),
-              SizedBox(height: 15),
-              buildTextField(
-                controller: apellidoController,
-                label: "Apellidos",
-                icon: Icons.person_outline,
-              ),
-              SizedBox(height: 15),
-              buildTextField(
-                controller: usuarioController,
-                label: "Nombre de Usuario",
-                icon: Icons.account_circle,
-              ),
-              SizedBox(height: 15),
-              buildTextField(
-                controller: correoController,
-                label: "Correo Electrónico",
-                icon: Icons.email,
-              ),
-              SizedBox(height: 15),
-              buildPasswordField(),
-              SizedBox(height: 30),
-              buildButton("Guardar Cambios", Colors.white, Colors.blue.shade900, () {
-                // Implementar la funcionalidad de guardar cambios
-                showMessage("Cambios guardados exitosamente", Colors.green);
-              }),
-              SizedBox(height: 15),
-              buildButton("Cancelar", Colors.red, Colors.white, () {
-                Navigator.pop(context);
-              }),
             ],
           ),
         ),
@@ -104,99 +168,119 @@ class _PerfilScreenState extends State<PerfilScreen> {
     required IconData icon,
   }) {
     return Container(
-      width: 400,
       child: TextField(
         controller: controller,
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white, fontSize: 16),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.white70),
+          labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
           filled: true,
           fillColor: Colors.white.withOpacity(0.1),
-          prefixIcon: Icon(icon, color: Colors.white70),
+          prefixIcon: Icon(icon, color: Colors.white70, size: 24),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide(color: Colors.white24),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.blue.shade900),
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Colors.blue.shade900, width: 2),
           ),
+          contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         ),
       ),
     );
   }
 
   Widget buildPasswordField() {
-    return Container(
-      width: 400,
-      child: TextField(
-        controller: passwordController,
-        obscureText: !_passwordVisible,
-        style: TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          labelText: "Contraseña",
-          labelStyle: TextStyle(color: Colors.white70),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.1),
-          prefixIcon: Icon(Icons.lock, color: Colors.white70),
-          suffixIcon: IconButton(
-            icon: Icon(
-              _passwordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Colors.white70,
-            ),
-            onPressed: () {
-              setState(() {
-                _passwordVisible = !_passwordVisible;
-              });
-            },
+    return TextField(
+      controller: passwordController,
+      obscureText: !_passwordVisible,
+      style: TextStyle(color: Colors.white, fontSize: 16),
+      decoration: InputDecoration(
+        labelText: "Contraseña",
+        labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.1),
+        prefixIcon: Icon(Icons.lock, color: Colors.white70, size: 24),
+        suffixIcon: IconButton(
+          icon: Icon(
+            _passwordVisible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.white70,
+            size: 24,
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.white24),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.blue.shade900),
-          ),
+          onPressed: () {
+            setState(() {
+              _passwordVisible = !_passwordVisible;
+            });
+          },
         ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.white24),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade900, width: 2),
+        ),
+        contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       ),
     );
   }
 
   Widget buildButton(String text, Color backgroundColor, Color textColor, VoidCallback onPressed) {
-    return SizedBox(
-      width: 200,
-      height: 50,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: backgroundColor.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
+          foregroundColor: textColor,
+          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(15),
           ),
-          elevation: 5,
-          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          elevation: 0,
+          textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        child: Text(text, style: TextStyle(color: textColor)),
+        child: Text(text),
       ),
     );
   }
 
   void showMessage(String text, Color color) {
     final snackBar = SnackBar(
-      content: Text(text, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      content: Text(text, 
+        style: TextStyle(
+          fontSize: 16, 
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        )
+      ),
       backgroundColor: color,
       behavior: SnackBarBehavior.floating,
       duration: Duration(seconds: 2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      margin: EdgeInsets.all(20),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

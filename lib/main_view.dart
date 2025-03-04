@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'Menu_Usuario/Perfil.dart';
 
 class Menu extends StatelessWidget {
   const Menu({super.key});
@@ -78,7 +79,12 @@ class Menu extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.person),
               title: Text('Perfil'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PerfilScreen()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.settings),

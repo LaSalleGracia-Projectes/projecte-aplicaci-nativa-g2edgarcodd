@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Menu_Usuario/Perfil.dart';
+import 'main.dart';
 
 class Menu extends StatelessWidget {
   const Menu({super.key});
@@ -94,7 +95,13 @@ class Menu extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text('Cerrar sesión'),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                  (route) => false,
+                );
+              },
             ),
           ],
         ),

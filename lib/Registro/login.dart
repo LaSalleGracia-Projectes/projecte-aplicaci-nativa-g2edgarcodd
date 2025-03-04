@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '/main.dart'; // Importar la pantalla principal
+import '/main_view.dart'; // Add this import
 
 class LoginScreen extends StatefulWidget {
   final String correo;
@@ -77,6 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
       showMessage("Información incompleta", Colors.orange);
     } else if (correoIngresado == widget.correo && passwordIngresada == widget.password) {
       showMessage("Login exitoso", Colors.green);
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => Menu()),
+        (route) => false,
+      );
     } else {
       showMessage("Correo y/o contraseña incorrectos", Colors.red);
     }

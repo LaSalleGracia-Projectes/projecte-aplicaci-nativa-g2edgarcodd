@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Menu_Usuario/Perfil.dart';
+import 'Menu_Usuario/Configuracion.dart';
 import 'main.dart';
 
 class Menu extends StatelessWidget {
@@ -90,7 +91,12 @@ class Menu extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Configuración'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ConfiguracionScreen()),
+                );
+              },
             ),
             ListTile(
               leading: Icon(Icons.exit_to_app),

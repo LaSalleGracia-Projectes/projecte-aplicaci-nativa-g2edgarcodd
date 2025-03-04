@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'Editar_Perfil.dart';
 
 class PerfilScreen extends StatefulWidget {
   @override
@@ -145,11 +146,22 @@ class _PerfilScreenState extends State<PerfilScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  buildButton("Guardar Cambios", Colors.white, Colors.blue.shade900, () {
-                    showMessage("Cambios guardados exitosamente", Colors.green);
+                  buildButton("Editar Datos", Colors.white, Colors.blue.shade900, () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditarPerfilScreen(
+                          nombre: nombreController.text,
+                          apellidos: apellidoController.text,
+                          usuario: usuarioController.text,
+                          correo: correoController.text,
+                          password: passwordController.text,
+                        ),
+                      ),
+                    );
                   }),
                   SizedBox(width: 20),
-                  buildButton("Cancelar", Colors.red, Colors.white, () {
+                  buildButton("Volver", Colors.red, Colors.white, () {
                     Navigator.pop(context);
                   }),
                 ],
@@ -171,6 +183,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
       child: TextField(
         controller: controller,
         style: TextStyle(color: Colors.white, fontSize: 16),
+        enabled: false,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
@@ -185,9 +198,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide(color: Colors.white24),
           ),
-          focusedBorder: OutlineInputBorder(
+          disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.blue.shade900, width: 2),
+            borderSide: BorderSide(color: Colors.white24),
           ),
           contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         ),
@@ -198,7 +211,8 @@ class _PerfilScreenState extends State<PerfilScreen> {
   Widget buildPasswordField() {
     return TextField(
       controller: passwordController,
-      obscureText: !_passwordVisible,
+      obscureText: true,
+      enabled: false,
       style: TextStyle(color: Colors.white, fontSize: 16),
       decoration: InputDecoration(
         labelText: "Contraseña",
@@ -206,18 +220,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
         filled: true,
         fillColor: Colors.white.withOpacity(0.1),
         prefixIcon: Icon(Icons.lock, color: Colors.white70, size: 24),
-        suffixIcon: IconButton(
-          icon: Icon(
-            _passwordVisible ? Icons.visibility : Icons.visibility_off,
-            color: Colors.white70,
-            size: 24,
-          ),
-          onPressed: () {
-            setState(() {
-              _passwordVisible = !_passwordVisible;
-            });
-          },
-        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,
@@ -226,9 +228,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: Colors.white24),
         ),
-        focusedBorder: OutlineInputBorder(
+        disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.blue.shade900, width: 2),
+          borderSide: BorderSide(color: Colors.white24),
         ),
         contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       ),

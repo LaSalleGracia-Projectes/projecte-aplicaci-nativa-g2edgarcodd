@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'Registro/registro.dart';
 import 'Registro/login.dart';
 import 'main_view.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
   runApp(MyApp());
 }
 

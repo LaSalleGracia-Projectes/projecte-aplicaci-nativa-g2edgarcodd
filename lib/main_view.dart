@@ -14,7 +14,7 @@ class Menu extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: Image.asset('images/logoPrueba.png', height: 40),
+              child: Image.asset('images/streamhub.png', height: 40),
             ),
             Align(
               alignment: Alignment.center,

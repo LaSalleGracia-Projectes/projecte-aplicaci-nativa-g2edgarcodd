@@ -37,7 +37,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
         decoration: BoxDecoration(
           color: Color(0xFF060D17),
           image: DecorationImage(
-            image: AssetImage('images/logoPrueba.png'),
+            image: AssetImage('images/streamhub.png'),
             opacity: 0.05,
             fit: BoxFit.cover,
           ),

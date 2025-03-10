@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'Menu_Usuario/Perfil.dart';
+import 'Menu_Usuario/Configuracion.dart';
+import 'main.dart';
 import 'dart:async';
 
 class Menu extends StatefulWidget {
@@ -51,7 +54,6 @@ class _MenuState extends State<Menu> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +62,7 @@ class _MenuState extends State<Menu> {
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: Image.asset('images/logoPrueba.png', height: 40),
+              child: Image.asset('images/streamhub.png', height: 40),
             ),
 
             Align(
@@ -148,24 +150,40 @@ class _MenuState extends State<Menu> {
             ListTile(
               leading: Icon(Icons.person),
               title: Text('Perfil'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PerfilScreen()),
+                );
+              },
             ),
 
             ListTile(
               leading: Icon(Icons.settings),
               title: Text('Configuración'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ConfiguracionScreen()),
+                );
+              },
             ),
 
             ListTile(
               leading: Icon(Icons.exit_to_app),
               title: Text('Cerrar sesión'),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                  (route) => false,
+                );
+              },
             ),
           ],
         ),
       ),
-
+      
       body: Container(
         color: Color(0xFF060D17),
         child: Center(

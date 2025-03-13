@@ -370,10 +370,4 @@ class _MenuState extends State<Menu> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
 }

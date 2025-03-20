@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '/main.dart'; // Importar la pantalla principal
 import '/main_view.dart'; // Add this import
@@ -20,55 +21,101 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(6, 13, 23, 1), // Fondo oscuro
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Iniciar Sesión",
-                style: TextStyle(
-                  fontSize: 28, // Tamaño de fuente más compacto
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 25),
-              buildTextField(
-                controller: correoController,
-                label: "Correo Electrónico",
-                icon: Icons.email,
-                isPassword: false,
-              ),
-              SizedBox(height: 12),
-              buildTextField(
-                controller: passwordController,
-                label: "Contraseña",
-                icon: Icons.lock,
-                isPassword: true,
-              ),
-              SizedBox(height: 20),
-              buildButton("Iniciar Sesión", Colors.white, Colors.blue.shade900, () {
-                verificarCredenciales();
-              }),
-              SizedBox(height: 10),
-              buildButton("Salir", Colors.red, Colors.white, () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                      (route) => false,
-                );
-              }),
-            ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'images/fondo1.png', // Imagen de fondo
+            fit: BoxFit.cover,
           ),
-        ),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Ajusta el desenfoque
+            child: Container(
+              color: Colors.black.withOpacity(0.3), // Ajusta la opacidad
+            ),
+          ),
+          Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Iniciar Sesión",
+                    style: TextStyle(
+                      fontSize: 32, // Tamaño de fuente ajustado
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "¡Bienvenido de nuevo a Streamhub!",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  SizedBox(height: 25),
+                  buildTextField(
+                    controller: correoController,
+                    label: "Correo Electrónico",
+                    icon: Icons.email,
+                    isPassword: false,
+                  ),
+                  SizedBox(height: 12),
+                  buildTextField(
+                    controller: passwordController,
+                    label: "Contraseña",
+                    icon: Icons.lock,
+                    isPassword: true,
+                  ),
+                  SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      "¿Olvidaste tu contraseña?",
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  buildButton("Iniciar Sesión", Colors.yellow, Colors.black, () {
+                    verificarCredenciales();
+                  }),
+                  SizedBox(height: 20),
+                  Text(
+                    "O inicia sesión con",
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.g_mobiledata, color: Colors.white),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.facebook, color: Colors.white),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      "¿No tienes una cuenta? Regístrate aquí",
+                      style: TextStyle(color: Colors.yellow),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
-
 
   void verificarCredenciales() {
     String correoIngresado = correoController.text.trim();
@@ -81,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => Menu()),
-        (route) => false,
+            (route) => false,
       );
     } else {
       showMessage("Correo y/o contraseña incorrectos", Colors.red);

@@ -1,27 +1,21 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '/main.dart'; // Importar la pantalla principal
-import '/main_view.dart'; // Add this import
-import '/Registro/registro.dart'; // Agregar la importación de la vista de registro
-import '/Registro/restablecer_password.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import '/main_view.dart'; // Importar la vista principal
+import '/Registro/registro.dart'; // Importar la vista de registro
+import '/Registro/restablecer_password.dart'; // Importar la vista de restablecer contraseña
+import '/Registro/login.dart';  // Importa la vista de login
 
-class LoginScreen extends StatefulWidget {
-  final String correo;
-  final String password;
 
-  LoginScreen({required this.correo, required this.password});
-
+class ResetPasswordScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController correoController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  final TextEditingController newPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   bool _passwordVisible = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Iniciar Sesión",
+                    "Restablecer Contraseña",
                     style: TextStyle(
                       fontSize: 32, // Tamaño de fuente ajustado
                       fontWeight: FontWeight.bold,
@@ -54,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    "¡Bienvenido de nuevo a Streamhub!",
+                    "Ingresa una nueva contraseña",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
@@ -62,69 +56,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 25),
                   buildTextField(
-                    controller: correoController,
-                    label: "Correo Electrónico",
-                    icon: Icons.email,
-                    isPassword: false,
-                  ),
-                  SizedBox(height: 12),
-                  buildTextField(
-                    controller: passwordController,
-                    label: "Contraseña",
+                    controller: newPasswordController,
+                    label: "Nueva Contraseña",
                     icon: Icons.lock,
                     isPassword: true,
                   ),
-                  SizedBox(height: 10),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ResetPasswordScreen()), // Usa el nombre correcto
-                      );
-                    },
-                    child: Text(
-                      "¿Olvidaste tu contraseña?",
-                      style: TextStyle(color: Colors.white70),
-                    ),
+                  SizedBox(height: 12),
+                  buildTextField(
+                    controller: confirmPasswordController,
+                    label: "Confirmar Contraseña",
+                    icon: Icons.lock,
+                    isPassword: true,
                   ),
-
                   SizedBox(height: 20),
-                  buildButton("Iniciar Sesión", Color(0xFFFCB500), Colors.black, () {
-                    verificarCredenciales();
+                  buildButton("Restablecer Contraseña", Color(0xFFFCB500), Colors.black, () {
+                    verificarContrasena();
                   }),
-                  SizedBox(height: 20),
-                  Text(
-                    "O inicia sesión con",
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.g_mobiledata, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.facebook, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () {
-                      // Navegar a la vista de registro
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegistroScreen()), // Asegúrate de que RegistroScreen() sea la pantalla de registro
-                      );
-                    },
-                    child: Text(
-                      "¿No tienes una cuenta? Regístrate aquí",
-                      style: TextStyle(color: Color(0xFFFCB500)),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -134,21 +81,23 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void verificarCredenciales() {
-    String correoIngresado = correoController.text.trim();
-    String passwordIngresada = passwordController.text.trim();
+  void verificarContrasena() {
+    String newPassword = newPasswordController.text.trim();
+    String confirmPassword = confirmPasswordController.text.trim();
 
-    if (correoIngresado.isEmpty || passwordIngresada.isEmpty) {
-      showMessage("Información incompleta", Colors.orange);
-    } else if (correoIngresado == widget.correo && passwordIngresada == widget.password) {
-      showMessage("Login exitoso", Colors.green);
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => Menu()),
-            (route) => false,
-      );
+    if (newPassword.isEmpty || confirmPassword.isEmpty) {
+      showMessage("Por favor completa ambos campos", Colors.orange);
+    } else if (newPassword != confirmPassword) {
+      showMessage("Las contraseñas no coinciden", Colors.red);
+    } else if (!RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$').hasMatch(newPassword)) {
+      showMessage("La contraseña no cumple con los requisitos de seguridad", Colors.orange);
     } else {
-      showMessage("Correo y/o contraseña incorrectos", Colors.red);
+      showMessage("Contraseña restablecida con éxito", Colors.green);
+      // Navegar a la vista de login después de un restablecimiento exitoso
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen(correo: '', password: '',)), // Cambia LoginScreen() por la ruta correcta
+      );
     }
   }
 

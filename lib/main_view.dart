@@ -5,6 +5,7 @@ import 'Menu_Usuario/Perfil.dart';
 import 'Menu_Usuario/Configuracion.dart';
 import 'main.dart';
 import 'dart:async';
+import 'Header/Contacto.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:http/http.dart' as http;
 import 'package:carousel_slider/carousel_slider.dart';
@@ -87,7 +88,12 @@ class _MenuState extends State<Menu> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ContactoScreen()),
+                      );
+                    },
                     child: Text(
                       'Contacto',
                       style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),

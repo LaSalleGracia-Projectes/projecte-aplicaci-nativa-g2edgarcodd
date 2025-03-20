@@ -119,7 +119,7 @@ class RegistroScreen extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
+                            backgroundColor: Color(0xFFFCB500),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -128,7 +128,7 @@ class RegistroScreen extends StatelessWidget {
                           ),
                           child: Text(
                             "Continuar →",
-                            style: TextStyle(color: Colors.blue.shade900),
+                            style: TextStyle(color: Colors.black),
                           ),
                         ),
                       ),
@@ -138,13 +138,13 @@ class RegistroScreen extends StatelessWidget {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HomePage(),
+                              builder: (context) => LoginScreen(correo: '', password: ''), // Ajusta los valores según sea necesario
                             ),
                           );
                         },
                         child: Text(
                           "¿Ya tienes una cuenta? Inicia sesión aquí",
-                          style: TextStyle(color: Colors.white70),
+                          style: TextStyle(color: Color(0xFFFCB500)),
                         ),
                       ),
                     ],

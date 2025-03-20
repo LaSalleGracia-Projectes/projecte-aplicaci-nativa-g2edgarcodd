@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '/main.dart'; // Importar la pantalla principal
 import '/main_view.dart'; // Add this import
+import '/Registro/registro.dart'; // Agregar la importación de la vista de registro
 
 class LoginScreen extends StatefulWidget {
   final String correo;
@@ -78,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  buildButton("Iniciar Sesión", Colors.yellow, Colors.black, () {
+                  buildButton("Iniciar Sesión", Color(0xFFFCB500), Colors.black, () {
                     verificarCredenciales();
                   }),
                   SizedBox(height: 20),
@@ -102,10 +103,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 20),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navegar a la vista de registro
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegistroScreen()), // Asegúrate de que RegistroScreen() sea la pantalla de registro
+                      );
+                    },
                     child: Text(
                       "¿No tienes una cuenta? Regístrate aquí",
-                      style: TextStyle(color: Colors.yellow),
+                      style: TextStyle(color: Color(0xFFFCB500)),
                     ),
                   ),
                 ],

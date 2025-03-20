@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '/main.dart'; // Importar la pantalla principal
 import '/main_view.dart'; // Add this import
 import '/Registro/registro.dart'; // Agregar la importación de la vista de registro
+import '/Registro/restablecer_password.dart';
 
 class LoginScreen extends StatefulWidget {
   final String correo;
@@ -72,12 +73,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(height: 10),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ResetPasswordScreen()), // Usa el nombre correcto
+                      );
+                    },
                     child: Text(
                       "¿Olvidaste tu contraseña?",
                       style: TextStyle(color: Colors.white70),
                     ),
                   ),
+
                   SizedBox(height: 20),
                   buildButton("Iniciar Sesión", Color(0xFFFCB500), Colors.black, () {
                     verificarCredenciales();

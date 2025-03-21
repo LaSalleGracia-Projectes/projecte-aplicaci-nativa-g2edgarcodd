@@ -64,7 +64,7 @@ class _MenuState extends State<Menu> {
             // Logo a la izquierda
             Align(
               alignment: Alignment.centerLeft,
-              child: Image.asset('images/streamhub.png', height: 40),
+              child: Image.asset('images/streamhub.png', height: 50),
             ),
             // Menú central
             Align(
@@ -76,21 +76,21 @@ class _MenuState extends State<Menu> {
                     onPressed: () {},
                     child: Text(
                       'Inicio',
-                      style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
+                      style: TextStyle(/*color: Color(0xFFF6F6F7),*/ fontSize: 16),
                     ),
                   ),
                   TextButton(
                     onPressed: () {},
                     child: Text(
                       'Servicios',
-                      style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
+                      style: TextStyle(/*color: Color(0xFFF6F6F7),*/ fontSize: 16),
                     ),
                   ),
                   TextButton(
                     onPressed: () {},
                     child: Text(
                       'Contacto',
-                      style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
+                      style: TextStyle(/*color: Color(0xFFF6F6F7),*/ fontSize: 16),
                     ),
                   ),
                 ],
@@ -105,10 +105,10 @@ class _MenuState extends State<Menu> {
                   SizedBox(
                     width: 150,
                     child: TextField(
-                      style: TextStyle(color: Color(0xFFF6F6F7)),
+                      /*style: TextStyle(color: Color(0xFFF6F6F7)),*/
                       decoration: InputDecoration(
                         hintText: 'Buscar...',
-                        hintStyle: TextStyle(color: Color(0xFFF6F6F7)),
+                        /*hintStyle: TextStyle(color: Color(0xFFF6F6F7)),*/
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -138,7 +138,7 @@ class _MenuState extends State<Menu> {
               decoration: BoxDecoration(color: Color(0xFF060D17)),
               child: Text(
                 'Menú de usuario',
-                style: TextStyle(color: Color(0xFFF6F6F7)),
+                /*style: TextStyle(color: Color(0xFFF6F6F7)),*/
               ),
             ),
             ListTile(
@@ -175,88 +175,90 @@ class _MenuState extends State<Menu> {
           ],
         ),
       ),
-      body: Container(
-        color: Color(0xFF060D17),
-        child: Center(
-          child: _items.isEmpty
-              ? CircularProgressIndicator()
-              : CarouselSlider(
-            options: CarouselOptions(
-              autoPlay: true,
-              enlargeCenterPage: true,
-              aspectRatio: 16 / 9,
-            ),
-            items: _items.map((item) {
-              return Builder(
-                builder: (BuildContext context) {
-                  double posterHeight = MediaQuery.of(context).size.height * 0.85;
-                  return Container(
-                    margin: EdgeInsets.all(5.0),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF060D17),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        // Parte izquierda: título encima del póster
-                        Expanded(
-                          flex: 6,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              // Título de la película
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  item['titulo'] ?? '',
-                                  style: TextStyle(
-                                    color: Color(0xFFF6F6F7),
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Container(
+          /*color: Color(0xFF060D17),*/
+          child: Center(
+            child: _items.isEmpty
+                ? CircularProgressIndicator()
+                : CarouselSlider(
+              options: CarouselOptions(
+                autoPlay: true,
+                enlargeCenterPage: true,
+                aspectRatio: 16 / 9,
+              ),
+              items: _items.map((item) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    double posterHeight = MediaQuery.of(context).size.height * 0.7;
+                    return Container(
+                      margin: EdgeInsets.all(5.0),
+                      decoration: BoxDecoration(
+                        /*color: Color(0xFF060D17),*/
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          // Parte izquierda: título encima del póster
+                          Expanded(
+                            flex: 6,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // Título de la película
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    item['titulo'] ?? '',
+                                    style: TextStyle(
+                                      /*color: Color(0xFFF6F6F7),*/
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              // Imagen del póster
-                              Container(
-                                height: posterHeight,
-                                child: item['portada']!.isNotEmpty
-                                    ? Image.network(
-                                  item['portada']!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(Icons.error, color: Color(0xFFF6F6F7)),
-                                )
-                                    : Icon(Icons.image, size: 50, color: Color(0xFFF6F6F7)),
-                              ),
-                            ],
+                                // Imagen del póster
+                                Container(
+                                  height: posterHeight,
+                                  child: item['portada']!.isNotEmpty
+                                      ? Image.network(
+                                    item['portada']!,
+                                    fit: BoxFit.contain,
+                                    width: double.infinity,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        Icon(Icons.error, color: Color(0xFFF6F6F7)),
+                                  )
+                                      : Icon(Icons.image, size: 50, color: Color(0xFFF6F6F7)),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        // Parte derecha: imagen de perfil y texto debajo
-                        Expanded(
-                          flex: 4,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundImage: NetworkImage(
-                                    'https://via.placeholder.com/100'), // Imagen de stock
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                "Lorem Ipsum",
-                                style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
-                              ),
-                            ],
+                          // Parte derecha: imagen de perfil y texto debajo
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: NetworkImage(
+                                      'https://via.placeholder.com/100'), // Imagen de stock
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  "Lorem Ipsum",
+                                  style: TextStyle(/*color: Color(0xFFF6F6F7),*/ fontSize: 16),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            }).toList(),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),

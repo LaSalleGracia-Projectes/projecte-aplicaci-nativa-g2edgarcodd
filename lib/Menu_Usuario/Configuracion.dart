@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../theme_provider.dart';
 import '../main.dart';
 
 class ConfiguracionScreen extends StatefulWidget {
@@ -36,6 +38,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
     
     return Scaffold(
       appBar: AppBar(
@@ -102,25 +105,12 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                   SizedBox(height: 50),
 
                   // Sección de Apariencia
-                  _buildSection(
-                    'Apariencia',
-                    Icons.palette_outlined,
-                    [
-                      _buildSwitchOption(
-                        'Modo Blanco y Negro',
-                        'Cambia la apariencia a escala de grises',
-                        _modoBlancoyNegro,
-                        (value) {
-                          setState(() {
-                            _modoBlancoyNegro = value;
-                          });
-                          _mostrarMensaje(
-                            'Modo ${value ? "activado" : "desactivado"}',
-                            Colors.blue,
-                          );
-                        },
-                      ),
-                    ],
+                  SwitchListTile(
+                    title: Text("Modo Oscuro"),
+                    value: themeProvider.isDarkMode,
+                    onChanged: (value) {
+                      themeProvider.toggleTheme();
+                    }
                   ),
                   SizedBox(height: 25),
 

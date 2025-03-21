@@ -39,7 +39,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -104,13 +104,52 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                   ),
                   SizedBox(height: 50),
 
-                  // Sección de Apariencia
-                  SwitchListTile(
-                    title: Text("Modo Oscuro"),
-                    value: themeProvider.isDarkMode,
-                    onChanged: (value) {
-                      themeProvider.toggleTheme();
-                    }
+                  // Sección de Apariencia con padding uniforme
+                  _buildSection(
+                    'Apariencia',
+                    Icons.brightness_6_outlined,
+                    [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Agrega padding uniforme
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Modo Oscuro',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  'Activa o desactiva el tema oscuro',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 10), // Ajusta la distancia del switch al borde
+                              child: Switch(
+                                value: themeProvider.isDarkMode,
+                                onChanged: (value) {
+                                  themeProvider.toggleTheme();
+                                },
+                                activeColor: Colors.blue,
+                                activeTrackColor: Colors.blue.withOpacity(0.3),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 25),
 

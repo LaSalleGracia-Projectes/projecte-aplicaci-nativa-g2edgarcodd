@@ -4,6 +4,8 @@ import '/main.dart'; // Importar la pantalla principal
 import '/main_view.dart'; // Add this import
 import '/Registro/registro.dart'; // Agregar la importación de la vista de registro
 import '/Registro/restablecer_password.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   final String correo;
@@ -19,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController correoController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _passwordVisible = false;
+
 
   @override
   Widget build(BuildContext context) {

@@ -1,14 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'Menu_Usuario/Perfil.dart';
 import 'Menu_Usuario/Configuracion.dart';
 import 'main.dart';
 import 'dart:async';
-import 'package:mongo_dart/mongo_dart.dart' as mongo;
-import 'package:http/http.dart' as http;
-import 'package:carousel_slider/carousel_slider.dart';
-import 'dart:convert';
+import 'Header/Contacto.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -18,55 +13,47 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  final List<Map<String, String>> _items = [];
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  final int _totalPages = 2;
+  late Timer _timer;
 
+  @override
   void initState() {
     super.initState();
-    _fetchMongoData();
+    _startAutoSlide();
   }
 
-  Future<void> _fetchMongoData() async {
-    try {
-      var mongoDB = mongo.Db('mongodb://localhost:27017/streamhub');
-      await mongoDB.open();
-      log("Conectado a Mongo");
-      var collection = mongoDB.collection('content');
-      var docs = await collection.find().toList();
+  void _startAutoSlide() {
+    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
       setState(() {
-        _items.clear();
-        for (var doc in docs) {
-          _items.add({
-            'titulo': doc['#TITLE']?.toString() ?? 'Título no Disponible',
-            'portada': doc['#IMG_POSTER'].toString(),
-          });
-        }
+        _currentPage = (_currentPage + 1) % _totalPages;
+        _pageController.animateToPage(
+          _currentPage,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
       });
-      log("Contenido de _items: ${_items.toString()}");
-
-      await mongoDB.close();
-    } catch (e) {
-      log("Error al conectar a MongoDB: $e");
-    }
+    });
   }
 
   @override
   void dispose() {
+    _timer.cancel();
+    _pageController.dispose();
     super.dispose();
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Stack(
           children: [
-            // Logo a la izquierda
             Align(
               alignment: Alignment.centerLeft,
               child: Image.asset('images/streamhub.png', height: 50),
             ),
-            // Menú central
             Align(
               alignment: Alignment.center,
               child: Row(
@@ -89,6 +76,18 @@ class _MenuState extends State<Menu> {
                   TextButton(
                     onPressed: () {},
                     child: Text(
+                      'Foro',
+                      style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ContactoScreen()),
+                      );
+                    },
+                    child: Text(
                       'Contacto',
                       style: TextStyle(/*color: Color(0xFFF6F6F7),*/ fontSize: 16),
                     ),
@@ -96,7 +95,6 @@ class _MenuState extends State<Menu> {
                 ],
               ),
             ),
-            // Buscador y avatar a la derecha
             Align(
               alignment: Alignment.centerRight,
               child: Row(
@@ -130,6 +128,7 @@ class _MenuState extends State<Menu> {
         ),
         backgroundColor: Color(0xFF060D17),
       ),
+
       endDrawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

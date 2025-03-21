@@ -74,7 +74,7 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
         decoration: BoxDecoration(
           color: Color(0xFF060D17),
           image: DecorationImage(
-            image: AssetImage('images/streamhub.png'),
+            image: AssetImage('images/fondo2.png'),
             opacity: 0.05,
             fit: BoxFit.cover,
           ),

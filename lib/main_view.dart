@@ -4,6 +4,7 @@ import 'Menu_Usuario/Configuracion.dart';
 import 'main.dart';
 import 'dart:async';
 import 'Header/Contacto.dart';
+import 'Header/Blog.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -74,7 +75,12 @@ class _MenuState extends State<Menu> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Blog()),
+                      );
+                    },
                     child: Text(
                       'Blog',
                       style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),

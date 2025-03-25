@@ -40,7 +40,6 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
 
   void _enviarFormulario() {
     if (_formKey.currentState!.validate()) {
-      // Aquí iría la lógica para enviar el formulario
       _mostrarMensaje('¡Mensaje enviado con éxito!', Colors.green);
       _formKey.currentState!.reset();
       _nombreController.clear();
@@ -56,14 +55,7 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Contacto',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: Text('Contacto', style: TextStyle(color: Colors.white, fontSize: 24)),
         backgroundColor: Color(0xFF060D17),
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
@@ -82,10 +74,10 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.25),
+              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.10),
               child: Column(
                 children: [
-                  // Icono animado de contacto
+                  // Ícono animado más grande
                   AnimatedBuilder(
                     animation: _animation,
                     builder: (context, child) {
@@ -103,21 +95,17 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                           boxShadow: [
                             BoxShadow(
                               color: Colors.blue.withOpacity(0.3),
-                              spreadRadius: 3 + (_animation.value * 3),
+                              spreadRadius: 2 + (_animation.value * 3),
                               blurRadius: 10,
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.contact_mail,
-                          size: 50,
-                          color: Colors.white,
-                        ),
+                        child: Icon(Icons.contact_mail, size: 60, color: Colors.white),
                       );
                     },
                   ),
 
-                  // Formulario
+                  // Formulario más grande
                   Container(
                     padding: EdgeInsets.all(25),
                     decoration: BoxDecoration(
@@ -126,8 +114,8 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.white.withOpacity(0.1),
-                          Colors.white.withOpacity(0.05),
+                          Colors.white.withOpacity(0.12),
+                          Colors.white.withOpacity(0.07),
                         ],
                       ),
                       boxShadow: [
@@ -141,153 +129,33 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                     child: Form(
                       key: _formKey,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '¡Contáctanos!',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Completa el formulario y nos pondremos en contacto contigo lo antes posible.',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
+                          _buildTextField(
+                            controller: _nombreController,
+                            label: 'Nombre',
+                            icon: Icons.person,
                           ),
                           SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _nombreController,
-                                  label: 'Nombre',
-                                  icon: Icons.person,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Requerido';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: TextEditingController(),
-                                  label: 'Apellidos',
-                                  icon: Icons.person_outline,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Requerido';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
+                          _buildTextField(
+                            controller: _emailController,
+                            label: 'Correo electrónico',
+                            icon: Icons.email,
+                            keyboardType: TextInputType.emailAddress,
                           ),
-                          SizedBox(height: 15),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _emailController,
-                                  label: 'Correo electrónico',
-                                  icon: Icons.email,
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Requerido';
-                                    }
-                                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                                      return 'Email inválido';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: TextEditingController(),
-                                  label: 'Teléfono',
-                                  icon: Icons.phone,
-                                  keyboardType: TextInputType.phone,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Requerido';
-                                    }
-                                    if (!RegExp(r'^\+?[\d\s-]+$').hasMatch(value)) {
-                                      return 'Teléfono inválido';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 20),
                           _buildTextField(
                             controller: _asuntoController,
                             label: 'Asunto',
                             icon: Icons.subject,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor, ingresa el asunto';
-                              }
-                              return null;
-                            },
                           ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 20),
                           _buildTextField(
                             controller: _mensajeController,
                             label: 'Mensaje',
                             icon: Icons.message,
-                            maxLines: 4,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor, ingresa tu mensaje';
-                              }
-                              return null;
-                            },
+                            maxLines: 5,
                           ),
-                          SizedBox(height: 15),
-                          // Dropdown para tipo de consulta
-                          DropdownButtonFormField<String>(
-                            value: 'Consulta general',
-                            items: [
-                              'Consulta general',
-                              'Soporte técnico',
-                              'Ventas',
-                              'Facturación',
-                              'Otros'
-                            ].map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (value) {},
-                            style: TextStyle(color: Colors.white),
-                            dropdownColor: Color(0xFF060D17),
-                            decoration: InputDecoration(
-                              labelText: 'Tipo de consulta',
-                              labelStyle: TextStyle(color: Colors.white70),
-                              prefixIcon: Icon(Icons.category, color: Colors.white70),
-                              filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
+                          SizedBox(height: 30),
                           Row(
                             children: [
                               Expanded(
@@ -313,7 +181,7 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 25),
                 ],
               ),
             ),
@@ -329,78 +197,41 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
     required IconData icon,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
-    required String? Function(String?) validator,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.white, fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.white70),
-        prefixIcon: Icon(icon, color: Colors.white70),
+        labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
+        prefixIcon: Icon(icon, color: Colors.white70, size: 22),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withOpacity(0.12),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.blue, width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.red, width: 2),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.red, width: 2),
-        ),
-        errorStyle: TextStyle(color: Colors.red.shade300),
       ),
-      validator: validator,
     );
   }
 
-  Widget _buildButton(
-      String text,
-      IconData icon,
-      Color color,
-      VoidCallback onPressed,
-      ) {
-    return Container(
-      height: 45,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
+  Widget _buildButton(String text, IconData icon, Color color, VoidCallback onPressed) {
+    return ElevatedButton.icon(
+      icon: Icon(icon, color: Colors.white, size: 20),
+      label: Text(
+        text,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
       ),
-      child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white, size: 20),
-        label: Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          elevation: 0,
-        ),
-        onPressed: onPressed,
       ),
+      onPressed: onPressed,
     );
   }
 
@@ -409,26 +240,16 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.info_outline, color: Colors.white),
-            SizedBox(width: 10),
-            Text(
-              mensaje,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Icon(Icons.info_outline, color: Colors.white, size: 20),
+            SizedBox(width: 12),
+            Text(mensaje, style: TextStyle(color: Colors.white, fontSize: 16)),
           ],
         ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        margin: EdgeInsets.all(20),
-        duration: Duration(seconds: 3),
-        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(18),
+        duration: Duration(seconds: 2),
       ),
     );
   }

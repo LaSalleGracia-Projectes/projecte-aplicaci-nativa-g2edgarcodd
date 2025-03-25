@@ -5,6 +5,7 @@ import 'main.dart';
 import 'dart:async';
 import 'Header/Contacto.dart';
 import 'Header/Blog.dart';
+import 'Header/Explorar.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -68,7 +69,12 @@ class _MenuState extends State<Menu> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Explorar()),
+                      );
+                    },
                     child: Text(
                       'Explorar',
                       style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),

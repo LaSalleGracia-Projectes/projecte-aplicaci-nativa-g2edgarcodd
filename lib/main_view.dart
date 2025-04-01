@@ -324,10 +324,37 @@ class _MenuState extends State<Menu> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            _buildFooterLink(Icons.home, 'Inicio'),
-                            _buildFooterLink(Icons.explore, 'Explorar'),
-                            _buildFooterLink(Icons.article, 'Blog'),
-                            _buildFooterLink(Icons.forum, 'Foro'),
+                            _buildFooterLink(
+                              Icons.home, 
+                              'Inicio',
+                              onPressed: () {
+                                // Recargar la vista actual (main_view)
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => Menu()),
+                                );
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.explore, 
+                              'Explorar',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const Explorar()),
+                                );
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.article, 
+                              'Blog',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const Blog()),
+                                );
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -345,10 +372,34 @@ class _MenuState extends State<Menu> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            _buildFooterLink(Icons.movie, 'Películas'),
-                            _buildFooterLink(Icons.tv, 'Series'),
-                            _buildFooterLink(Icons.video_library, 'Documentales'),
-                            _buildFooterLink(Icons.new_releases, 'Novedades'),
+                            _buildFooterLink(
+                              Icons.movie, 
+                              'Películas',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de películas
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.tv, 
+                              'Series',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de series
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.video_library, 
+                              'Documentales',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de documentales  
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.new_releases, 
+                              'Novedades',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de novedades
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -366,10 +417,34 @@ class _MenuState extends State<Menu> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            _buildFooterLink(Icons.description, 'Términos de servicio'),
-                            _buildFooterLink(Icons.privacy_tip, 'Política de privacidad'),
-                            _buildFooterLink(Icons.cookie, 'Cookies'),
-                            _buildFooterLink(Icons.info, 'Información legal'),
+                            _buildFooterLink(
+                              Icons.description, 
+                              'Términos de servicio',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de términos
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.privacy_tip, 
+                              'Política de privacidad',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de privacidad
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.cookie, 
+                              'Cookies',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de cookies
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.info, 
+                              'Información legal',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de información legal
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -387,10 +462,34 @@ class _MenuState extends State<Menu> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            _buildFooterLink(Icons.email, 'contacto@streamhub.com'),
-                            _buildFooterLink(Icons.support_agent, 'Soporte'),
-                            _buildFooterLink(Icons.campaign, 'Publicidad'),
-                            _buildFooterLink(Icons.question_answer, 'FAQ'),
+                            _buildFooterLink(
+                              Icons.email, 
+                              'contacto@streamhub.com',
+                              onPressed: () {
+                                // Aquí iría la funcionalidad de enviar email
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.support_agent, 
+                              'Soporte',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de soporte
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.campaign, 
+                              'Publicidad',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de publicidad
+                              },
+                            ),
+                            _buildFooterLink(
+                              Icons.question_answer, 
+                              'FAQ',
+                              onPressed: () {
+                                // Aquí iría la navegación a la vista de FAQ
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -401,15 +500,40 @@ class _MenuState extends State<Menu> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildSocialIcon(Icons.facebook),
+                      _buildSocialIcon(
+                        Icons.facebook,
+                        onPressed: () {
+                          // Aquí iría la acción para Facebook
+                        },
+                      ),
                       SizedBox(width: 15),
-                      _buildSocialIcon(Icons.whatshot), // Twitter/X
+                      _buildSocialIcon(
+                        Icons.whatshot,
+                        onPressed: () {
+                          // Aquí iría la acción para Twitter/X
+                        },
+                      ),
                       SizedBox(width: 15),
-                      _buildSocialIcon(Icons.camera_alt), // Instagram
+                      _buildSocialIcon(
+                        Icons.camera_alt,
+                        onPressed: () {
+                          // Aquí iría la acción para Instagram
+                        },
+                      ),
                       SizedBox(width: 15),
-                      _buildSocialIcon(Icons.play_arrow_rounded), // YouTube
+                      _buildSocialIcon(
+                        Icons.play_arrow_rounded,
+                        onPressed: () {
+                          // Aquí iría la acción para YouTube
+                        },
+                      ),
                       SizedBox(width: 15),
-                      _buildSocialIcon(Icons.discord), // Discord
+                      _buildSocialIcon(
+                        Icons.discord,
+                        onPressed: () {
+                          // Aquí iría la acción para Discord
+                        },
+                      ),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -458,41 +582,49 @@ class _MenuState extends State<Menu> {
     );
   }
   
-  Widget _buildFooterLink(IconData icon, String text) {
+  Widget _buildFooterLink(IconData icon, String text, {VoidCallback? onPressed}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Icon(
-            icon, 
-            size: 16, 
-            color: Color(0xFFFFD700),
-          ),
-          SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              color: Color(0xFFF6F6F7),
-              fontSize: 12,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(4),
+        child: Row(
+          children: [
+            Icon(
+              icon, 
+              size: 16, 
+              color: Color(0xFFFFD700),
             ),
-          ),
-        ],
+            SizedBox(width: 8),
+            Text(
+              text,
+              style: TextStyle(
+                color: Color(0xFFF6F6F7),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
   
-  Widget _buildSocialIcon(IconData icon) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: BoxDecoration(
-        color: Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Icon(
-        icon,
-        color: Color(0xFFFFD700),
-        size: 20,
+  Widget _buildSocialIcon(IconData icon, {VoidCallback? onPressed}) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Icon(
+          icon,
+          color: Color(0xFFFFD700),
+          size: 20,
+        ),
       ),
     );
   }

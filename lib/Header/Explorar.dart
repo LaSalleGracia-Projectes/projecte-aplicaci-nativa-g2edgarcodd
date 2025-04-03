@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../theme_provider.dart';
 
 class Explorar extends StatefulWidget {
   const Explorar({super.key});
@@ -11,20 +13,22 @@ class _ExplorarState extends State<Explorar> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     
     return Scaffold(
       appBar: AppBar(
-        title: Text('Explorar', style: TextStyle(color: Colors.white, fontSize: 24)),
-        backgroundColor: Color(0xFF060D17),
+        title: Text('Explorar', style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
+        backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: Color(0xFF060D17),
+          color: isDark ? Color(0xFF060D17) : Colors.white,
           image: DecorationImage(
             image: AssetImage('images/fondo2.png'),
-            opacity: 0.10,
+            opacity: isDark ? 0.10 : 0.05,
             fit: BoxFit.cover,
           ),
         ),
@@ -177,10 +181,13 @@ class _ExplorarState extends State<Explorar> {
   }
 
   Widget _buildSectionTitle(String title) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Text(
       title,
       style: TextStyle(
-        color: Colors.white,
+        color: isDark ? Colors.white : Colors.black,
         fontSize: 28,
         fontWeight: FontWeight.bold,
       ),
@@ -188,6 +195,9 @@ class _ExplorarState extends State<Explorar> {
   }
 
   Widget _buildMovieCard(String title, String imagePath, String rating) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Container(
       width: 200,
       margin: EdgeInsets.only(right: 20),
@@ -233,7 +243,7 @@ class _ExplorarState extends State<Explorar> {
           Text(
             title,
             style: TextStyle(
-              color: Colors.white,
+              color: isDark ? Colors.white : Colors.black,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -244,6 +254,9 @@ class _ExplorarState extends State<Explorar> {
   }
 
   Widget _buildSeriesCard(String title, String imagePath, String season) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Container(
       width: 200,
       margin: EdgeInsets.only(right: 20),
@@ -292,7 +305,7 @@ class _ExplorarState extends State<Explorar> {
           Text(
             title,
             style: TextStyle(
-              color: Colors.white,
+              color: isDark ? Colors.white : Colors.black,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -303,15 +316,18 @@ class _ExplorarState extends State<Explorar> {
   }
 
   Widget _buildCommentCard(String username, String avatarPath, String comment, int rating) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Container(
       width: 300,
       margin: EdgeInsets.only(right: 20),
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: isDark ? Colors.white.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -330,7 +346,7 @@ class _ExplorarState extends State<Explorar> {
                   Text(
                     username,
                     style: TextStyle(
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Colors.black,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -352,7 +368,7 @@ class _ExplorarState extends State<Explorar> {
           Text(
             comment,
             style: TextStyle(
-              color: Colors.white70,
+              color: isDark ? Colors.white70 : Colors.black54,
               fontSize: 14,
               height: 1.5,
             ),

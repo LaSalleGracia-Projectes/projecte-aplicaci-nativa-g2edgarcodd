@@ -27,9 +27,7 @@ class MyApp extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(), // Tema claro
-      darkTheme: ThemeData.dark(), // Tema oscuro
-      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      theme: themeProvider.currentTheme,
       home: HomePage(),
     );
   }
@@ -38,10 +36,13 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+    
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Color.fromRGBO(6, 13, 23, 1), // Color sólido de fondo
+          color: isDark ? Color.fromRGBO(6, 13, 23, 1) : Colors.white, // Color adaptado al tema
         ),
         child: Center(
           child: Column(
@@ -52,7 +53,7 @@ class HomePage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
               ),
               SizedBox(height: 30),

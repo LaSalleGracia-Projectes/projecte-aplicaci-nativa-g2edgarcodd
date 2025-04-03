@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Editar_Perfil.dart';
+import 'package:provider/provider.dart';
+import '../theme_provider.dart';
 
 class PerfilScreen extends StatefulWidget {
   @override
@@ -17,28 +19,30 @@ class _PerfilScreenState extends State<PerfilScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     
     return Scaffold(
       appBar: AppBar(
         title: Text('Mi Perfil', 
           style: TextStyle(
-            color: Colors.white,
+            color: isDark ? Colors.white : Colors.black,
             fontSize: 24,
             fontWeight: FontWeight.bold
           )
         ),
-        backgroundColor: Color(0xFF060D17),
+        backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: Container(
         width: screenSize.width,
         height: screenSize.height,
         decoration: BoxDecoration(
-          color: Color(0xFF060D17),
+          color: isDark ? Color(0xFF060D17) : Colors.white,
           image: DecorationImage(
             image: AssetImage('images/streamhub.png'),
-            opacity: 0.05,
+            opacity: isDark ? 0.05 : 0.1,
             fit: BoxFit.cover,
           ),
         ),
@@ -179,90 +183,102 @@ class _PerfilScreenState extends State<PerfilScreen> {
     required String label,
     required IconData icon,
   }) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Container(
       child: TextField(
         controller: controller,
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
         enabled: false,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
+          labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 16),
           filled: true,
-          fillColor: Colors.white.withOpacity(0.1),
-          prefixIcon: Icon(icon, color: Colors.white70, size: 24),
+          fillColor: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+          prefixIcon: Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 24),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.white24),
+            borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(color: Colors.blue.shade700, width: 2),
           ),
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.white24),
+            borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
           ),
-          contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         ),
       ),
     );
   }
 
   Widget buildPasswordField() {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return TextField(
       controller: passwordController,
-      obscureText: true,
+      obscureText: !_passwordVisible,
       enabled: false,
-      style: TextStyle(color: Colors.white, fontSize: 16),
+      style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
       decoration: InputDecoration(
         labelText: "Contraseña",
-        labelStyle: TextStyle(color: Colors.white70, fontSize: 16),
+        labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 16),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
-        prefixIcon: Icon(Icons.lock, color: Colors.white70, size: 24),
+        fillColor: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+        prefixIcon: Icon(Icons.lock, color: isDark ? Colors.white70 : Colors.black54, size: 24),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.white24),
+          borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue.shade700, width: 2),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.white24),
+          borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       ),
     );
   }
 
-  Widget buildButton(String text, Color backgroundColor, Color textColor, VoidCallback onPressed) {
+  Widget buildButton(String text, Color textColor, Color backgroundColor, VoidCallback onPressed) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: backgroundColor.withOpacity(0.3),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
+      width: 160,
+      height: 50,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: backgroundColor,
           foregroundColor: textColor,
-          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+          elevation: 5,
+          shadowColor: Colors.black.withOpacity(0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          elevation: 0,
-          textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        child: Text(text),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
       ),
     );
   }

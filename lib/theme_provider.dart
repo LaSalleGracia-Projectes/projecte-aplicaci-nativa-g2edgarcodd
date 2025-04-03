@@ -20,7 +20,7 @@ class ThemeProvider extends ChangeNotifier {
   );
 
   final ThemeData _darkTheme = ThemeData(
-      brightness: Brightness.light,
+      brightness: Brightness.dark,
       primaryColor: Color(0xFF060D17),
       scaffoldBackgroundColor: Color(0xFF060D17),
       appBarTheme: AppBarTheme(backgroundColor: Color(0xFF060D17), foregroundColor: Colors.white),

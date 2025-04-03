@@ -6,6 +6,8 @@ import 'dart:async';
 import 'Header/Contacto.dart';
 import 'Header/Blog.dart';
 import 'Header/Explorar.dart';
+import 'package:provider/provider.dart';
+import 'theme_provider.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -48,6 +50,9 @@ class _MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+    
     return Scaffold(
       appBar: AppBar(
         title: Stack(
@@ -65,7 +70,7 @@ class _MenuState extends State<Menu> {
                     onPressed: () {},
                     child: Text(
                       'Inicio',
-                      style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
+                      style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 16),
                     ),
                   ),
                   TextButton(
@@ -77,7 +82,7 @@ class _MenuState extends State<Menu> {
                     },
                     child: Text(
                       'Explorar',
-                      style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
+                      style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 16),
                     ),
                   ),
                   TextButton(
@@ -89,7 +94,7 @@ class _MenuState extends State<Menu> {
                     },
                     child: Text(
                       'Blog',
-                      style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
+                      style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 16),
                     ),
                   ),
                   TextButton(
@@ -101,7 +106,7 @@ class _MenuState extends State<Menu> {
                     },
                     child: Text(
                       'Contacto',
-                      style: TextStyle(color: Color(0xFFF6F6F7), fontSize: 16),
+                      style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 16),
                     ),
                   ),
                 ],
@@ -115,10 +120,10 @@ class _MenuState extends State<Menu> {
                   SizedBox(
                     width: 150,
                     child: TextField(
-                      style: TextStyle(color: Color(0xFFF6F6F7)),
+                      style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black),
                       decoration: InputDecoration(
                         hintText: 'Buscar...',
-                        hintStyle: TextStyle(color: Color(0xFFF6F6F7)),
+                        hintStyle: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -138,57 +143,60 @@ class _MenuState extends State<Menu> {
             ),
           ],
         ),
-        backgroundColor: Color(0xFF060D17),
+        backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
       ),
 
       endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFF060D17)),
-              child: Text(
-                'Menú de usuario',
-                style: TextStyle(color: Color(0xFFF6F6F7)),
+        child: Container(
+          color: isDark ? Color(0xFF060D17) : Colors.white,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(color: isDark ? Color(0xFF060D17) : Colors.blue.shade100),
+                child: Text(
+                  'Menú de usuario',
+                  style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black),
+                ),
               ),
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Perfil'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PerfilScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Configuración'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ConfiguracionScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('Cerrar sesión'),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                      (route) => false,
-                );
-              },
-            ),
-          ],
+              ListTile(
+                leading: Icon(Icons.person, color: isDark ? Colors.white : Colors.black87),
+                title: Text('Perfil', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PerfilScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.settings, color: isDark ? Colors.white : Colors.black87),
+                title: Text('Configuración', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ConfiguracionScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.exit_to_app, color: isDark ? Colors.white : Colors.black87),
+                title: Text('Cerrar sesión', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                        (route) => false,
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
 
       body: Container(
-        color: Color(0xFF060D17),
+        color: isDark ? Color(0xFF060D17) : Colors.white,
         child: Column(
           children: [
             Expanded(
@@ -233,7 +241,7 @@ class _MenuState extends State<Menu> {
                                     Expanded(
                                       child: Text(
                                         'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-                                        style: TextStyle(fontSize: 16, color: Color(0xFFF6F6F7)),
+                                        style: TextStyle(fontSize: 16, color: isDark ? Color(0xFFF6F6F7) : Colors.black),
                                         maxLines: 8,
                                         overflow: TextOverflow.fade,
                                         softWrap: true,
@@ -259,10 +267,10 @@ class _MenuState extends State<Menu> {
             // Footer
             Container(
               padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-              color: Color(0xFF060D17),
+              color: isDark ? Color(0xFF060D17) : Colors.grey.shade100,
               child: Column(
                 children: [
-                  Divider(color: Color(0xFF333333), thickness: 1),
+                  Divider(color: isDark ? Color(0xFF333333) : Colors.grey.shade300, thickness: 1),
                   SizedBox(height: 20),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -277,7 +285,7 @@ class _MenuState extends State<Menu> {
                                 Text(
                                   'STREAM',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: isDark ? Colors.white : Colors.black,
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -296,7 +304,7 @@ class _MenuState extends State<Menu> {
                             Text(
                               'Tu destino para descubrir películas y series que te inspirarán, emocionarán y entretendrán.',
                               style: TextStyle(
-                                color: Color(0xFFF6F6F7), 
+                                color: isDark ? Color(0xFFF6F6F7) : Colors.black87, 
                                 fontSize: 12,
                               ),
                             ),
@@ -320,6 +328,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.home, 
                               'Inicio',
+                              isDark: isDark,
                               onPressed: () {
                                 // Recargar la vista actual (main_view)
                                 Navigator.pushReplacement(
@@ -331,6 +340,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.explore, 
                               'Explorar',
+                              isDark: isDark,
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -341,6 +351,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.article, 
                               'Blog',
+                              isDark: isDark,
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -368,6 +379,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.movie, 
                               'Películas',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de películas
                               },
@@ -375,6 +387,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.tv, 
                               'Series',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de series
                               },
@@ -382,6 +395,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.video_library, 
                               'Documentales',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de documentales  
                               },
@@ -389,6 +403,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.new_releases, 
                               'Novedades',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de novedades
                               },
@@ -413,6 +428,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.description, 
                               'Términos de servicio',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de términos
                               },
@@ -420,6 +436,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.privacy_tip, 
                               'Política de privacidad',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de privacidad
                               },
@@ -427,6 +444,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.cookie, 
                               'Cookies',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de cookies
                               },
@@ -434,6 +452,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.info, 
                               'Información legal',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de información legal
                               },
@@ -458,6 +477,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.email, 
                               'contacto@streamhub.com',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la funcionalidad de enviar email
                               },
@@ -465,6 +485,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.support_agent, 
                               'Soporte',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de soporte
                               },
@@ -472,6 +493,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.campaign, 
                               'Publicidad',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de publicidad
                               },
@@ -479,6 +501,7 @@ class _MenuState extends State<Menu> {
                             _buildFooterLink(
                               Icons.question_answer, 
                               'FAQ',
+                              isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la navegación a la vista de FAQ
                               },
@@ -495,6 +518,7 @@ class _MenuState extends State<Menu> {
                     children: [
                       _buildSocialIcon(
                         Icons.facebook,
+                        isDark: isDark,
                         onPressed: () {
                           // Aquí iría la acción para Facebook
                         },
@@ -502,6 +526,7 @@ class _MenuState extends State<Menu> {
                       SizedBox(width: 15),
                       _buildSocialIcon(
                         Icons.whatshot,
+                        isDark: isDark,
                         onPressed: () {
                           // Aquí iría la acción para Twitter/X
                         },
@@ -509,6 +534,7 @@ class _MenuState extends State<Menu> {
                       SizedBox(width: 15),
                       _buildSocialIcon(
                         Icons.camera_alt,
+                        isDark: isDark,
                         onPressed: () {
                           // Aquí iría la acción para Instagram
                         },
@@ -516,6 +542,7 @@ class _MenuState extends State<Menu> {
                       SizedBox(width: 15),
                       _buildSocialIcon(
                         Icons.play_arrow_rounded,
+                        isDark: isDark,
                         onPressed: () {
                           // Aquí iría la acción para YouTube
                         },
@@ -523,6 +550,7 @@ class _MenuState extends State<Menu> {
                       SizedBox(width: 15),
                       _buildSocialIcon(
                         Icons.discord,
+                        isDark: isDark,
                         onPressed: () {
                           // Aquí iría la acción para Discord
                         },
@@ -534,15 +562,15 @@ class _MenuState extends State<Menu> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildPaymentMethod('VISA'),
+                      _buildPaymentMethod('VISA', isDark: isDark),
                       SizedBox(width: 10),
-                      _buildPaymentMethod('MC'),
+                      _buildPaymentMethod('MC', isDark: isDark),
                       SizedBox(width: 10),
-                      _buildPaymentMethod('AMEX'),
+                      _buildPaymentMethod('AMEX', isDark: isDark),
                       SizedBox(width: 10),
-                      _buildPaymentMethod('PP'),
+                      _buildPaymentMethod('PP', isDark: isDark),
                       SizedBox(width: 10),
-                      _buildPaymentMethod('GPay'),
+                      _buildPaymentMethod('GPay', isDark: isDark),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -550,7 +578,7 @@ class _MenuState extends State<Menu> {
                   Text(
                     '© 2023 StreamHub',
                     style: TextStyle(
-                      color: Color(0xFF999999),
+                      color: isDark ? Color(0xFF999999) : Colors.grey.shade600,
                       fontSize: 12,
                     ),
                   ),
@@ -563,7 +591,7 @@ class _MenuState extends State<Menu> {
                       onPressed: () {
                         // Scroll to top functionality would go here
                       },
-                      child: Icon(Icons.arrow_upward, color: Color(0xFF060D17)),
+                      child: Icon(Icons.arrow_upward, color: isDark ? Color(0xFF060D17) : Colors.black),
                     ),
                   ),
                 ],
@@ -575,7 +603,7 @@ class _MenuState extends State<Menu> {
     );
   }
   
-  Widget _buildFooterLink(IconData icon, String text, {VoidCallback? onPressed}) {
+  Widget _buildFooterLink(IconData icon, String text, {bool isDark = false, VoidCallback? onPressed}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
@@ -592,7 +620,7 @@ class _MenuState extends State<Menu> {
             Text(
               text,
               style: TextStyle(
-                color: Color(0xFFF6F6F7),
+                color: isDark ? Color(0xFFF6F6F7) : Colors.black,
                 fontSize: 12,
               ),
             ),
@@ -602,7 +630,7 @@ class _MenuState extends State<Menu> {
     );
   }
   
-  Widget _buildSocialIcon(IconData icon, {VoidCallback? onPressed}) {
+  Widget _buildSocialIcon(IconData icon, {bool isDark = false, VoidCallback? onPressed}) {
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(18),
@@ -610,7 +638,7 @@ class _MenuState extends State<Menu> {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: Color(0xFF1A1A1A),
+          color: isDark ? Color(0xFF1A1A1A) : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Icon(
@@ -622,17 +650,17 @@ class _MenuState extends State<Menu> {
     );
   }
   
-  Widget _buildPaymentMethod(String text) {
+  Widget _buildPaymentMethod(String text, {bool isDark = false}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: Color(0xFF1A1A1A),
+        color: isDark ? Color(0xFF1A1A1A) : Colors.grey.shade200,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         text,
         style: TextStyle(
-          color: Color(0xFFF6F6F7),
+          color: isDark ? Color(0xFFF6F6F7) : Colors.black,
           fontSize: 10,
           fontWeight: FontWeight.bold,
         ),

@@ -39,29 +39,30 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Configuración',
           style: TextStyle(
-            color: Colors.white,
+            color: isDark ? Colors.white : Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF060D17),
+        backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: Container(
         width: screenSize.width,
         height: screenSize.height,
         decoration: BoxDecoration(
-          color: Color(0xFF060D17),
+          color: isDark ? Color(0xFF060D17) : Colors.white,
           image: DecorationImage(
             image: AssetImage('images/fondo2.png'),
-            opacity: 0.05,
+            opacity: isDark ? 0.05 : 0.1,
             fit: BoxFit.cover,
           ),
         ),
@@ -120,7 +121,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                 Text(
                                   'Modo Oscuro',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: isDark ? Colors.white : Colors.black,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -129,7 +130,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                 Text(
                                   'Activa o desactiva el tema oscuro',
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: isDark ? Colors.white70 : Colors.black54,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -166,7 +167,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                             Text(
                               'Selecciona tu idioma preferido',
                               style: TextStyle(
-                                color: Colors.white70,
+                                color: isDark ? Colors.white70 : Colors.black54,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -177,22 +178,25 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 gradient: LinearGradient(
-                                  colors: [
+                                  colors: isDark ? [
                                     Colors.white.withOpacity(0.1),
                                     Colors.white.withOpacity(0.05),
+                                  ] : [
+                                    Colors.grey.withOpacity(0.1),
+                                    Colors.grey.withOpacity(0.05),
                                   ],
                                 ),
-                                border: Border.all(color: Colors.white24),
+                                border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
                               ),
                               child: DropdownButton<String>(
                                 value: _idiomaSeleccionado,
-                                dropdownColor: Color(0xFF060D17),
+                                dropdownColor: isDark ? Color(0xFF060D17) : Colors.white,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: isDark ? Colors.white : Colors.black,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                icon: Icon(Icons.arrow_drop_down, color: Colors.white, size: 24),
+                                icon: Icon(Icons.arrow_drop_down, color: isDark ? Colors.white : Colors.black, size: 24),
                                 isExpanded: true,
                                 underline: Container(),
                                 onChanged: (String? newValue) {
@@ -237,7 +241,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  backgroundColor: Color(0xFF060D17),
+                                  backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15),
                                   ),
@@ -246,17 +250,17 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                       Icon(Icons.warning_amber_rounded, color: Colors.red, size: 22),
                                       SizedBox(width: 8),
                                       Text('Cerrar Sesión',
-                                          style: TextStyle(color: Colors.white, fontSize: 16)),
+                                          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16)),
                                     ],
                                   ),
                                   content: Text(
                                     '¿Estás seguro de que quieres cerrar sesión?',
-                                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                                    style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 14),
                                   ),
                                   actions: [
                                     TextButton(
                                       child: Text('Cancelar',
-                                          style: TextStyle(color: Colors.white70, fontSize: 14)),
+                                          style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 14)),
                                       onPressed: () => Navigator.pop(context),
                                     ),
                                     ElevatedButton(
@@ -297,20 +301,26 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
   }
 
   Widget _buildSection(String title, IconData icon, List<Widget> children) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
+          colors: isDark ? [
             Colors.white.withOpacity(0.1),
             Colors.white.withOpacity(0.05),
+          ] : [
+            Colors.grey.withOpacity(0.1),
+            Colors.grey.withOpacity(0.05),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.1),
             blurRadius: 8,
             offset: Offset(0, 3),
           ),
@@ -356,6 +366,9 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
     bool value,
     Function(bool) onChanged,
   ) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Padding(
       padding: EdgeInsets.all(12),
       child: Row(
@@ -368,7 +381,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                 Text(
                   title,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: isDark ? Colors.white : Colors.black,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -377,7 +390,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: isDark ? Colors.white70 : Colors.black54,
                     fontSize: 12,
                   ),
                 ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../theme_provider.dart';
 
 class Blog extends StatefulWidget {
   const Blog({super.key});
@@ -39,22 +41,24 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Blog', style: TextStyle(color: Colors.white, fontSize: 24)),
-        backgroundColor: Color(0xFF060D17),
+        title: Text('Blog', style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
+        backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: Container(
         width: screenSize.width,
         height: screenSize.height,
         decoration: BoxDecoration(
-          color: Color(0xFF060D17),
+          color: isDark ? Color(0xFF060D17) : Colors.white,
           image: DecorationImage(
             image: AssetImage('images/fondo2.png'),
-            opacity: 0.10,
+            opacity: isDark ? 0.10 : 0.05,
             fit: BoxFit.cover,
           ),
         ),
@@ -146,13 +150,13 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                         margin: EdgeInsets.only(bottom: 30),
                         child: TextField(
                           controller: _searchController,
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: isDark ? Colors.white : Colors.black),
                           decoration: InputDecoration(
                             hintText: 'Buscar en el blog...',
-                            hintStyle: TextStyle(color: Colors.white60),
-                            prefixIcon: Icon(Icons.search, color: Colors.white60),
+                            hintStyle: TextStyle(color: isDark ? Colors.white60 : Colors.black54),
+                            prefixIcon: Icon(Icons.search, color: isDark ? Colors.white60 : Colors.black54),
                             filled: true,
-                            fillColor: Colors.white.withOpacity(0.1),
+                            fillColor: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
                               borderSide: BorderSide.none,
@@ -160,7 +164,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
                               borderSide: BorderSide(
-                                color: Colors.white.withOpacity(0.2),
+                                color: isDark ? Colors.white.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -185,10 +189,10 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                               Container(
                                 padding: EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
+                                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(15),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: isDark ? Colors.white.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
                                   ),
                                 ),
                                 child: Column(
@@ -197,7 +201,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                     Text(
                                       'Categorías',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: isDark ? Colors.white : Colors.black,
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -206,7 +210,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                     Text(
                                       'Seleccionar Filtros',
                                       style: TextStyle(
-                                        color: Colors.white70,
+                                        color: isDark ? Colors.white70 : Colors.black54,
                                         fontSize: 16,
                                       ),
                                     ),
@@ -224,10 +228,10 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                               Container(
                                 padding: EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
+                                  color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(15),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: isDark ? Colors.white.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
                                   ),
                                 ),
                                 child: Column(
@@ -236,7 +240,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                     Text(
                                       'Suscríbete a Nuestra Newsletter',
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: isDark ? Colors.white : Colors.black,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -245,7 +249,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                     Text(
                                       'Recibe las últimas novedades sobre Streaming y contenidos directamente a tu email.',
                                       style: TextStyle(
-                                        color: Colors.white70,
+                                        color: isDark ? Colors.white70 : Colors.black54,
                                         fontSize: 14,
                                         height: 1.5,
                                       ),
@@ -253,22 +257,22 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                     SizedBox(height: 20),
                                     TextField(
                                       controller: _emailController,
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
                                       decoration: InputDecoration(
                                         hintText: 'Tu correo electrónico',
-                                        hintStyle: TextStyle(color: Colors.white60),
+                                        hintStyle: TextStyle(color: isDark ? Colors.white60 : Colors.black38),
                                         filled: true,
-                                        fillColor: Colors.white.withOpacity(0.1),
+                                        fillColor: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(8),
                                           borderSide: BorderSide(
-                                            color: Colors.white.withOpacity(0.3),
+                                            color: isDark ? Colors.white.withOpacity(0.3) : Colors.grey.withOpacity(0.3),
                                           ),
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(8),
                                           borderSide: BorderSide(
-                                            color: Colors.white.withOpacity(0.3),
+                                            color: isDark ? Colors.white.withOpacity(0.3) : Colors.grey.withOpacity(0.3),
                                           ),
                                         ),
                                         focusedBorder: OutlineInputBorder(
@@ -349,7 +353,10 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildCategoryButton(String category, IconData icon) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
     final isSelected = _selectedCategory == category;
+    
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 10),
@@ -365,7 +372,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: BorderSide(
-              color: isSelected ? Colors.blue : Colors.white.withOpacity(0.2),
+              color: isSelected ? Colors.blue : isDark ? Colors.white.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
             ),
           ),
         ),
@@ -373,14 +380,14 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.blue : Colors.white70,
+              color: isSelected ? Colors.blue : isDark ? Colors.white70 : Colors.black54,
               size: 20,
             ),
             SizedBox(width: 10),
             Text(
               category,
               style: TextStyle(
-                color: isSelected ? Colors.blue : Colors.white70,
+                color: isSelected ? Colors.blue : isDark ? Colors.white70 : Colors.black54,
                 fontSize: 16,
               ),
             ),
@@ -391,14 +398,17 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildMovieCard(String title, String description, String imagePath) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: isDark ? Colors.white.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
         ),
       ),
       child: Row(
@@ -423,7 +433,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                 Text(
                   title,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: isDark ? Colors.white : Colors.black,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -432,7 +442,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                 Text(
                   description,
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: isDark ? Colors.white70 : Colors.black54,
                     fontSize: 16,
                     height: 1.5,
                   ),

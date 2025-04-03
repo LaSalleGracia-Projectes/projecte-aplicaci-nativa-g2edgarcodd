@@ -476,7 +476,7 @@ class _MenuState extends State<Menu> {
                             SizedBox(height: 10),
                             _buildFooterLink(
                               Icons.email, 
-                              'contacto@streamhub.com',
+                              'soporte.streamhub@gmail.com',
                               isDark: isDark,
                               onPressed: () {
                                 // Aquí iría la funcionalidad de enviar email

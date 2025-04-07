@@ -651,7 +651,7 @@ class _MenuState extends State<Menu> {
               
               // Footer
               Container(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
                 color: isDark ? Color(0xFF060D17) : Colors.grey.shade100,
                 child: Column(
                   children: [
@@ -791,55 +791,6 @@ class _MenuState extends State<Menu> {
                                 isDark: isDark,
                                 onPressed: () {
                                   // Aquí iría la navegación a la vista de novedades
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Legal
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Legal',
-                                style: TextStyle(
-                                  color: Color(0xFFFFD700),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              _buildFooterLink(
-                                Icons.description, 
-                                'Términos de servicio',
-                                isDark: isDark,
-                                onPressed: () {
-                                  // Aquí iría la navegación a la vista de términos
-                                },
-                              ),
-                              _buildFooterLink(
-                                Icons.privacy_tip, 
-                                'Política de privacidad',
-                                isDark: isDark,
-                                onPressed: () {
-                                  // Aquí iría la navegación a la vista de privacidad
-                                },
-                              ),
-                              _buildFooterLink(
-                                Icons.cookie, 
-                                'Cookies',
-                                isDark: isDark,
-                                onPressed: () {
-                                  // Aquí iría la navegación a la vista de cookies
-                                },
-                              ),
-                              _buildFooterLink(
-                                Icons.info, 
-                                'Información legal',
-                                isDark: isDark,
-                                onPressed: () {
-                                  // Aquí iría la navegación a la vista de información legal
                                 },
                               ),
                             ],

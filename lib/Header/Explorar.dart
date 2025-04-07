@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../theme_provider.dart';
+import 'package:streamhub/Services/tmdb_service.dart';
+import 'package:streamhub/Models/media_item.dart';
+import 'package:streamhub/theme_provider.dart';
 
 class Explorar extends StatefulWidget {
   const Explorar({super.key});
@@ -10,6 +12,73 @@ class Explorar extends StatefulWidget {
 }
 
 class _ExplorarState extends State<Explorar> {
+  // Listas para almacenar los datos de la API
+  List<MediaItem> _moviesList = [];
+  List<MediaItem> _seriesList = [];
+  bool _isLoadingMovies = true;
+  bool _isLoadingSeries = true;
+  bool _hasErrorMovies = false;
+  bool _hasErrorSeries = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  // Método para cargar datos de la API
+  Future<void> _loadData() async {
+    // Aseguramos que estamos en estado de carga al iniciar
+    if (mounted) {
+      setState(() {
+        _isLoadingMovies = true;
+        _isLoadingSeries = true;
+        _hasErrorMovies = false;
+        _hasErrorSeries = false;
+      });
+    }
+    
+    // Cargamos las películas
+    try {
+      final movies = await TMDBService.getPopularContent(isMovie: true);
+      if (mounted) {
+        setState(() {
+          _moviesList = movies;
+          _isLoadingMovies = false;
+          _hasErrorMovies = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingMovies = false;
+          _hasErrorMovies = true;
+        });
+      }
+      print("Error cargando películas: $e");
+    }
+
+    // Cargamos las series
+    try {
+      final series = await TMDBService.getPopularContent(isMovie: false);
+      if (mounted) {
+        setState(() {
+          _seriesList = series;
+          _isLoadingSeries = false;
+          _hasErrorSeries = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingSeries = false;
+          _hasErrorSeries = true;
+        });
+      }
+      print("Error cargando series: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
@@ -40,7 +109,7 @@ class _ExplorarState extends State<Explorar> {
               Container(
                 width: double.infinity,
                 height: 300,
-                margin: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Stack(
@@ -62,7 +131,8 @@ class _ExplorarState extends State<Explorar> {
                           ),
                         ),
                       ),
-                      Center(
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -70,7 +140,7 @@ class _ExplorarState extends State<Explorar> {
                               'StreamHub Explorar',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 48,
+                                fontSize: screenSize.width < 600 ? 32 : 48,
                                 fontWeight: FontWeight.bold,
                                 shadows: [
                                   Shadow(
@@ -80,16 +150,17 @@ class _ExplorarState extends State<Explorar> {
                                   ),
                                 ],
                               ),
+                              textAlign: TextAlign.center,
                             ),
                             SizedBox(height: 15),
                             Container(
-                              width: screenSize.width * 0.6,
+                              width: screenSize.width * (screenSize.width < 600 ? 0.8 : 0.6),
                               child: Text(
                                 'Descubre las mejores películas, series y contenido exclusivo en nuestra plataforma',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: screenSize.width < 600 ? 14 : 18,
                                   height: 1.5,
                                   shadows: [
                                     Shadow(
@@ -119,17 +190,19 @@ class _ExplorarState extends State<Explorar> {
                     SizedBox(height: 20),
                     Container(
                       height: 300,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 5,
-                        itemBuilder: (context, index) {
-                          return _buildMovieCard(
-                            'Película ${index + 1}',
-                            'images/movie_poster.png',
-                            '4.5',
-                          );
-                        },
-                      ),
+                      child: _isLoadingMovies
+                          ? _buildLoadingIndicator()
+                          : _hasErrorMovies
+                              ? _buildErrorMessage('No se pudieron cargar las películas')
+                              : _moviesList.isEmpty
+                                  ? _buildEmptyMessage('No hay películas disponibles')
+                                  : ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: _moviesList.length,
+                                      itemBuilder: (context, index) {
+                                        return _buildMovieCardFromAPI(_moviesList[index]);
+                                      },
+                                    ),
                     ),
                     SizedBox(height: 40),
 
@@ -138,17 +211,19 @@ class _ExplorarState extends State<Explorar> {
                     SizedBox(height: 20),
                     Container(
                       height: 300,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 5,
-                        itemBuilder: (context, index) {
-                          return _buildSeriesCard(
-                            'Serie ${index + 1}',
-                            'images/series_poster.png',
-                            'Temporada ${index + 1}',
-                          );
-                        },
-                      ),
+                      child: _isLoadingSeries
+                          ? _buildLoadingIndicator()
+                          : _hasErrorSeries
+                              ? _buildErrorMessage('No se pudieron cargar las series')
+                              : _seriesList.isEmpty
+                                  ? _buildEmptyMessage('No hay series disponibles')
+                                  : ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: _seriesList.length,
+                                      itemBuilder: (context, index) {
+                                        return _buildSeriesCardFromAPI(_seriesList[index]);
+                                      },
+                                    ),
                     ),
                     SizedBox(height: 40),
 
@@ -157,18 +232,33 @@ class _ExplorarState extends State<Explorar> {
                     SizedBox(height: 20),
                     Container(
                       height: 200,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 5,
-                        itemBuilder: (context, index) {
-                          return _buildCommentCard(
-                            'Usuario ${index + 1}',
-                            'images/user_avatar.png',
-                            'Este es un comentario muy interesante sobre una película o serie que me gustó mucho...',
-                            4,
-                          );
-                        },
-                      ),
+                      child: _isLoadingMovies || _moviesList.isEmpty
+                          ? _buildLoadingIndicator()
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _moviesList.length > 0 ? 5 : 0,
+                              itemBuilder: (context, index) {
+                                // Generamos datos de reseñas con algunas películas de nuestra lista
+                                String username = "Usuario ${index + 1}";
+                                String movieTitle = '';
+                                if (index < _moviesList.length) {
+                                  movieTitle = _moviesList[index].title ?? 'esta película';
+                                } else {
+                                  int randomIndex = index % _moviesList.length;
+                                  movieTitle = _moviesList[randomIndex].title ?? 'esta película';
+                                }
+                                
+                                String comment = "Me encantó $movieTitle. La recomiendo mucho...";
+                                int rating = 3 + (index % 3); // Ratings de 3 a 5
+                                
+                                return _buildCommentCard(
+                                  username,
+                                  'images/user_avatar.png',
+                                  comment,
+                                  rating,
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -176,6 +266,85 @@ class _ExplorarState extends State<Explorar> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text(
+            'Cargando...',
+            style: TextStyle(
+              color: Provider.of<ThemeProvider>(context).isDarkMode ? Colors.white70 : Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorMessage(String message) {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            color: Colors.red,
+            size: 48,
+          ),
+          SizedBox(height: 16),
+          Text(
+            message,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black54,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _isLoadingMovies = true;
+                _isLoadingSeries = true;
+                _hasErrorMovies = false;
+                _hasErrorSeries = false;
+              });
+              _loadData();
+            },
+            child: Text('Reintentar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyMessage(String message) {
+    final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.inbox,
+            color: isDark ? Colors.white54 : Colors.black38,
+            size: 48,
+          ),
+          SizedBox(height: 16),
+          Text(
+            message,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black54,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -324,11 +493,18 @@ class _ExplorarState extends State<Explorar> {
       margin: EdgeInsets.only(right: 20),
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+        color: isDark ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.8),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
           color: isDark ? Colors.white.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 3),
+          )
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -338,44 +514,429 @@ class _ExplorarState extends State<Explorar> {
               CircleAvatar(
                 backgroundImage: AssetImage(avatarPath),
                 radius: 20,
+                backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
+                child: Icon(
+                  Icons.person,
+                  color: isDark ? Colors.white : Colors.black45,
+                  size: 24,
+                ),
               ),
               SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    username,
-                    style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      username,
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Row(
-                    children: List.generate(5, (index) {
-                      return Icon(
-                        index < rating ? Icons.star : Icons.star_border,
-                        color: Colors.amber,
-                        size: 16,
-                      );
-                    }),
-                  ),
-                ],
+                    Row(
+                      children: List.generate(5, (index) {
+                        return Icon(
+                          index < rating ? Icons.star : Icons.star_border,
+                          color: Colors.amber,
+                          size: 16,
+                        );
+                      }),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
           SizedBox(height: 10),
-          Text(
-            comment,
-            style: TextStyle(
-              color: isDark ? Colors.white70 : Colors.black54,
-              fontSize: 14,
-              height: 1.5,
+          Expanded(
+            child: Text(
+              comment,
+              style: TextStyle(
+                color: isDark ? Colors.white70 : Colors.black54,
+                fontSize: 14,
+                height: 1.5,
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Text(
+              'Hace 3 días',
+              style: TextStyle(
+                color: isDark ? Colors.white38 : Colors.black38,
+                fontSize: 12,
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMovieCardFromAPI(MediaItem movie) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
+    String imageUrl = TMDBService.getImageUrl(movie.posterPath ?? '');
+    String rating = (movie.voteAverage ?? 0.0).toStringAsFixed(1);
+    String year = (movie.releaseDate != null && movie.releaseDate!.isNotEmpty && movie.releaseDate!.length >= 4)
+        ? movie.releaseDate!.substring(0, 4)
+        : "Sin fecha";
+    
+    return GestureDetector(
+      onTap: () {
+        // En el futuro podríamos implementar una vista de detalle
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Has seleccionado: ${movie.title ?? "Sin título"}'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      },
+      child: Container(
+        width: 200,
+        margin: EdgeInsets.only(right: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Stack(
+                children: [
+                  // Imagen
+                  (movie.posterPath == null || movie.posterPath!.isEmpty)
+                      ? Container(
+                          height: 250,
+                          width: 200,
+                          color: Colors.grey[800],
+                          child: Center(
+                            child: Icon(
+                              Icons.movie_creation_outlined,
+                              size: 50,
+                              color: Colors.white54,
+                            ),
+                          ),
+                        )
+                      : Image.network(
+                          imageUrl,
+                          height: 250,
+                          width: 200,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: 250,
+                              width: 200,
+                              color: Colors.grey[800],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            print("Error cargando imagen: $error");
+                            return Container(
+                              height: 250,
+                              width: 200,
+                              color: Colors.grey[800],
+                              child: Center(
+                                child: Icon(Icons.error, color: Colors.white),
+                              ),
+                            );
+                          },
+                        ),
+                  // Rating
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            rating,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Etiqueta de película
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        'PELÍCULA',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Año en la parte inferior
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.8),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                      child: Text(
+                        year,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              width: 200,
+              child: Text(
+                movie.title ?? 'Sin título',
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            // Espacio adicional para evitar overflow
+            SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSeriesCardFromAPI(MediaItem serie) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
+    String imageUrl = TMDBService.getImageUrl(serie.posterPath ?? '');
+    String year = (serie.releaseDate != null && serie.releaseDate!.isNotEmpty && serie.releaseDate!.length >= 4)
+        ? serie.releaseDate!.substring(0, 4)
+        : "Sin fecha";
+    
+    return GestureDetector(
+      onTap: () {
+        // En el futuro podríamos implementar una vista de detalle
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Has seleccionado: ${serie.title ?? "Sin título"}'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      },
+      child: Container(
+        width: 200,
+        margin: EdgeInsets.only(right: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Stack(
+                children: [
+                  // Imagen
+                  (serie.posterPath == null || serie.posterPath!.isEmpty)
+                      ? Container(
+                          height: 250,
+                          width: 200,
+                          color: Colors.grey[800],
+                          child: Center(
+                            child: Icon(
+                              Icons.tv_outlined,
+                              size: 50,
+                              color: Colors.white54,
+                            ),
+                          ),
+                        )
+                      : Image.network(
+                          imageUrl,
+                          height: 250,
+                          width: 200,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: 250,
+                              width: 200,
+                              color: Colors.grey[800],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            print("Error cargando imagen de serie: $error");
+                            return Container(
+                              height: 250,
+                              width: 200,
+                              color: Colors.grey[800],
+                              child: Center(
+                                child: Icon(Icons.error, color: Colors.white),
+                              ),
+                            );
+                          },
+                        ),
+                  // Etiqueta superior de tipo
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        'SERIE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Rating
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star, color: Colors.amber, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            (serie.voteAverage ?? 0.0).toStringAsFixed(1),
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Información en la parte inferior
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.8),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Desde $year",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              'TV',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              width: 200,
+              child: Text(
+                serie.title ?? 'Sin título',
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            // Espacio adicional para evitar overflow
+            SizedBox(height: 8),
+          ],
+        ),
       ),
     );
   }

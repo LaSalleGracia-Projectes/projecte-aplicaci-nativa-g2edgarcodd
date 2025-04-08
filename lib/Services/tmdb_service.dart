@@ -4,7 +4,7 @@ import 'package:streamhub/Models/media_item.dart';
 
 class TMDBService {
   static const String _baseUrl = 'https://api.themoviedb.org/3';
-  static const String _apiKey = '6a55accf9c9a53c8ea4cd499256ed8d5'; // Reemplazar con tu API key
+  static const String _apiKey = 'fa4912f208d8c9000b8d8d009c28e2b5';
   static const String _imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
   // Método para obtener la URL completa de las imágenes

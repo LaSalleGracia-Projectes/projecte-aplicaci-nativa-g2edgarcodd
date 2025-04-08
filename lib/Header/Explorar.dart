@@ -40,7 +40,9 @@ class _ExplorarState extends State<Explorar> {
     
     // Cargamos las películas
     try {
+      print("Cargando películas...");
       final movies = await TMDBService.getPopularContent(isMovie: true);
+      print("Películas cargadas: ${movies.length}");
       if (mounted) {
         setState(() {
           _moviesList = movies;
@@ -49,18 +51,26 @@ class _ExplorarState extends State<Explorar> {
         });
       }
     } catch (e) {
+      print("Error cargando películas: $e");
       if (mounted) {
         setState(() {
           _isLoadingMovies = false;
           _hasErrorMovies = true;
         });
       }
-      print("Error cargando películas: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar películas: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
 
     // Cargamos las series
     try {
+      print("Cargando series...");
       final series = await TMDBService.getPopularContent(isMovie: false);
+      print("Series cargadas: ${series.length}");
       if (mounted) {
         setState(() {
           _seriesList = series;
@@ -69,13 +79,19 @@ class _ExplorarState extends State<Explorar> {
         });
       }
     } catch (e) {
+      print("Error cargando series: $e");
       if (mounted) {
         setState(() {
           _isLoadingSeries = false;
           _hasErrorSeries = true;
         });
       }
-      print("Error cargando series: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al cargar series: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -182,7 +198,7 @@ class _ExplorarState extends State<Explorar> {
 
               // Sección de Películas
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.only(left: 20, right: 0, top: 20, bottom: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -196,12 +212,15 @@ class _ExplorarState extends State<Explorar> {
                               ? _buildErrorMessage('No se pudieron cargar las películas')
                               : _moviesList.isEmpty
                                   ? _buildEmptyMessage('No hay películas disponibles')
-                                  : ListView.builder(
+                                  : SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      itemCount: _moviesList.length,
-                                      itemBuilder: (context, index) {
-                                        return _buildMovieCardFromAPI(_moviesList[index]);
-                                      },
+                                      padding: EdgeInsets.only(right: 20),
+                                      child: Row(
+                                        children: [
+                                          ..._moviesList.map((movie) => _buildMovieCardFromAPI(movie)),
+                                          SizedBox(width: 20),
+                                        ],
+                                      ),
                                     ),
                     ),
                     SizedBox(height: 40),
@@ -217,12 +236,15 @@ class _ExplorarState extends State<Explorar> {
                               ? _buildErrorMessage('No se pudieron cargar las series')
                               : _seriesList.isEmpty
                                   ? _buildEmptyMessage('No hay series disponibles')
-                                  : ListView.builder(
+                                  : SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
-                                      itemCount: _seriesList.length,
-                                      itemBuilder: (context, index) {
-                                        return _buildSeriesCardFromAPI(_seriesList[index]);
-                                      },
+                                      padding: EdgeInsets.only(right: 20),
+                                      child: Row(
+                                        children: [
+                                          ..._seriesList.map((serie) => _buildSeriesCardFromAPI(serie)),
+                                          SizedBox(width: 20),
+                                        ],
+                                      ),
                                     ),
                     ),
                     SizedBox(height: 40),
@@ -234,30 +256,37 @@ class _ExplorarState extends State<Explorar> {
                       height: 200,
                       child: _isLoadingMovies || _moviesList.isEmpty
                           ? _buildLoadingIndicator()
-                          : ListView.builder(
+                          : SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              itemCount: _moviesList.length > 0 ? 5 : 0,
-                              itemBuilder: (context, index) {
-                                // Generamos datos de reseñas con algunas películas de nuestra lista
-                                String username = "Usuario ${index + 1}";
-                                String movieTitle = '';
-                                if (index < _moviesList.length) {
-                                  movieTitle = _moviesList[index].title ?? 'esta película';
-                                } else {
-                                  int randomIndex = index % _moviesList.length;
-                                  movieTitle = _moviesList[randomIndex].title ?? 'esta película';
-                                }
-                                
-                                String comment = "Me encantó $movieTitle. La recomiendo mucho...";
-                                int rating = 3 + (index % 3); // Ratings de 3 a 5
-                                
-                                return _buildCommentCard(
-                                  username,
-                                  'images/user_avatar.png',
-                                  comment,
-                                  rating,
-                                );
-                              },
+                              padding: EdgeInsets.only(right: 20),
+                              child: Row(
+                                children: [
+                                  ...List.generate(
+                                    _moviesList.length > 0 ? 5 : 0,
+                                    (index) {
+                                      String username = "Usuario ${index + 1}";
+                                      String movieTitle = '';
+                                      if (index < _moviesList.length) {
+                                        movieTitle = _moviesList[index].title ?? 'esta película';
+                                      } else {
+                                        int randomIndex = index % _moviesList.length;
+                                        movieTitle = _moviesList[randomIndex].title ?? 'esta película';
+                                      }
+                                      
+                                      String comment = "Me encantó $movieTitle. La recomiendo mucho...";
+                                      int rating = 3 + (index % 3);
+                                      
+                                      return _buildCommentCard(
+                                        username,
+                                        'images/user_avatar.png',
+                                        comment,
+                                        rating,
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(width: 20),
+                                ],
+                              ),
                             ),
                     ),
                   ],
@@ -489,9 +518,9 @@ class _ExplorarState extends State<Explorar> {
     final isDark = themeProvider.isDarkMode;
     
     return Container(
-      width: 300,
+      width: 280,
       margin: EdgeInsets.only(right: 20),
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? Colors.black.withOpacity(0.3) : Colors.white.withOpacity(0.8),
         borderRadius: BorderRadius.circular(15),
@@ -513,15 +542,15 @@ class _ExplorarState extends State<Explorar> {
             children: [
               CircleAvatar(
                 backgroundImage: AssetImage(avatarPath),
-                radius: 20,
+                radius: 18,
                 backgroundColor: isDark ? Colors.grey[800] : Colors.grey[300],
                 child: Icon(
                   Icons.person,
                   color: isDark ? Colors.white : Colors.black45,
-                  size: 24,
+                  size: 20,
                 ),
               ),
-              SizedBox(width: 10),
+              SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -530,7 +559,7 @@ class _ExplorarState extends State<Explorar> {
                       username,
                       style: TextStyle(
                         color: isDark ? Colors.white : Colors.black,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 1,
@@ -541,7 +570,7 @@ class _ExplorarState extends State<Explorar> {
                         return Icon(
                           index < rating ? Icons.star : Icons.star_border,
                           color: Colors.amber,
-                          size: 16,
+                          size: 14,
                         );
                       }),
                     ),
@@ -550,14 +579,14 @@ class _ExplorarState extends State<Explorar> {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 8),
           Expanded(
             child: Text(
               comment,
               style: TextStyle(
                 color: isDark ? Colors.white70 : Colors.black54,
-                fontSize: 14,
-                height: 1.5,
+                fontSize: 13,
+                height: 1.4,
               ),
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
@@ -569,7 +598,7 @@ class _ExplorarState extends State<Explorar> {
               'Hace 3 días',
               style: TextStyle(
                 color: isDark ? Colors.white38 : Colors.black38,
-                fontSize: 12,
+                fontSize: 11,
               ),
             ),
           ),
@@ -590,7 +619,6 @@ class _ExplorarState extends State<Explorar> {
     
     return GestureDetector(
       onTap: () {
-        // En el futuro podríamos implementar una vista de detalle
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Has seleccionado: ${movie.title ?? "Sin título"}'),
@@ -720,7 +748,7 @@ class _ExplorarState extends State<Explorar> {
                         year,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
                     ),
@@ -728,22 +756,20 @@ class _ExplorarState extends State<Explorar> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 8),
             Container(
               width: 200,
               child: Text(
                 movie.title ?? 'Sin título',
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            // Espacio adicional para evitar overflow
-            SizedBox(height: 8),
           ],
         ),
       ),
@@ -761,7 +787,6 @@ class _ExplorarState extends State<Explorar> {
     
     return GestureDetector(
       onTap: () {
-        // En el futuro podríamos implementar una vista de detalle
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Has seleccionado: ${serie.title ?? "Sin título"}'),
@@ -894,7 +919,7 @@ class _ExplorarState extends State<Explorar> {
                             "Desde $year",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 12,
                             ),
                           ),
                           Container(
@@ -907,7 +932,7 @@ class _ExplorarState extends State<Explorar> {
                               'TV',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 12,
+                                fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -919,22 +944,20 @@ class _ExplorarState extends State<Explorar> {
                 ],
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 8),
             Container(
               width: 200,
               child: Text(
                 serie.title ?? 'Sin título',
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            // Espacio adicional para evitar overflow
-            SizedBox(height: 8),
           ],
         ),
       ),

@@ -787,7 +787,7 @@ class _MenuState extends State<Menu> {
                               ),
                               _buildFooterLink(
                                 Icons.new_releases, 
-                                'Novedades',
+                                'Comentarios',
                                 isDark: isDark,
                                 onPressed: () {
                                   // Aquí iría la navegación a la vista de novedades

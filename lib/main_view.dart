@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'theme_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:streamhub/Secciones/peliculas.dart';
+import 'package:streamhub/Secciones/series.dart';
 
 // Clase para almacenar datos de películas/series de TMDB
 class MediaItem {
@@ -766,7 +768,10 @@ class _MenuState extends State<Menu> {
                                 'Películas',
                                 isDark: isDark,
                                 onPressed: () {
-                                  // Aquí iría la navegación a la vista de películas
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const PeliculasView()),
+                                  );
                                 },
                               ),
                               _buildFooterLink(
@@ -774,23 +779,10 @@ class _MenuState extends State<Menu> {
                                 'Series',
                                 isDark: isDark,
                                 onPressed: () {
-                                  // Aquí iría la navegación a la vista de series
-                                },
-                              ),
-                              _buildFooterLink(
-                                Icons.video_library, 
-                                'Documentales',
-                                isDark: isDark,
-                                onPressed: () {
-                                  // Aquí iría la navegación a la vista de documentales  
-                                },
-                              ),
-                              _buildFooterLink(
-                                Icons.new_releases, 
-                                'Comentarios',
-                                isDark: isDark,
-                                onPressed: () {
-                                  // Aquí iría la navegación a la vista de novedades
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => SeriesView()),
+                                  );
                                 },
                               ),
                             ],

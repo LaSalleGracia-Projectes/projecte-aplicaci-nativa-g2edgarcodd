@@ -14,9 +14,9 @@ class TMDBService {
   }
 
   // Método para obtener contenido popular (películas o series)
-  static Future<List<MediaItem>> getPopularContent({required bool isMovie}) async {
+  static Future<List<MediaItem>> getPopularContent({required bool isMovie, int page = 1}) async {
     final contentType = isMovie ? 'movie' : 'tv';
-    final url = '$_baseUrl/$contentType/popular?api_key=$_apiKey&language=es-ES';
+    final url = '$_baseUrl/$contentType/popular?api_key=$_apiKey&language=es-ES&page=$page';
     
     try {
       final response = await http.get(Uri.parse(url));

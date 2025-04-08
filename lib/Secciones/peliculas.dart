@@ -13,29 +13,93 @@ class PeliculasView extends StatefulWidget {
 
 class _PeliculasViewState extends State<PeliculasView> {
   List<MediaItem> _moviesList = [];
+  List<MediaItem> _filteredMoviesList = [];
   bool _isLoading = true;
   bool _hasError = false;
   int _currentPage = 1;
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
+  String _selectedFilter = 'Ninguno';
+  bool _isAscending = true;
 
   @override
   void initState() {
     super.initState();
     _loadMovies();
     _scrollController.addListener(_onScroll);
+    _searchController.addListener(_filterMovies);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
+  void _filterMovies() {
+    final query = _searchController.text.toLowerCase().trim();
+    setState(() {
+      if (query.isEmpty) {
+        _filteredMoviesList = _moviesList;
+        _isSearching = false;
+      } else {
+        _filteredMoviesList = _moviesList
+            .where((movie) => 
+                (movie.title?.toLowerCase() ?? '').contains(query))
+            .toList();
+        _isSearching = true;
+      }
+    });
+  }
+
+  void _clearSearch() {
+    _searchController.clear();
+    setState(() {
+      _filteredMoviesList = _moviesList;
+      _isSearching = false;
+    });
+  }
+
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (!_isSearching && 
+        _scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       _loadMoreMovies();
     }
+  }
+
+  void _applyFilter(String filter) {
+    setState(() {
+      _selectedFilter = filter;
+      switch (filter) {
+        case 'Fecha de Lanzamiento':
+          _filteredMoviesList.sort((a, b) {
+            final dateA = a.releaseDate ?? '';
+            final dateB = b.releaseDate ?? '';
+            return _isAscending ? dateA.compareTo(dateB) : dateB.compareTo(dateA);
+          });
+          break;
+        case 'Rating':
+          _filteredMoviesList.sort((a, b) {
+            final ratingA = a.voteAverage ?? 0.0;
+            final ratingB = b.voteAverage ?? 0.0;
+            return _isAscending ? ratingA.compareTo(ratingB) : ratingB.compareTo(ratingA);
+          });
+          break;
+        case 'Letra':
+          _filteredMoviesList.sort((a, b) {
+            final titleA = a.title ?? '';
+            final titleB = b.title ?? '';
+            return _isAscending ? titleA.compareTo(titleB) : titleB.compareTo(titleA);
+          });
+          break;
+        default:
+          _filteredMoviesList = List.from(_moviesList);
+          break;
+      }
+    });
   }
 
   Future<void> _loadMovies() async {
@@ -51,6 +115,7 @@ class _PeliculasViewState extends State<PeliculasView> {
       if (mounted) {
         setState(() {
           _moviesList = movies;
+          _filteredMoviesList = movies;
           _isLoading = false;
           _hasError = false;
         });
@@ -67,7 +132,7 @@ class _PeliculasViewState extends State<PeliculasView> {
   }
 
   Future<void> _loadMoreMovies() async {
-    if (_isLoadingMore) return;
+    if (_isLoadingMore || _isSearching) return;
 
     setState(() {
       _isLoadingMore = true;
@@ -79,6 +144,9 @@ class _PeliculasViewState extends State<PeliculasView> {
       if (mounted) {
         setState(() {
           _moviesList.addAll(moreMovies);
+          _filteredMoviesList = _searchController.text.isEmpty 
+              ? _moviesList 
+              : _filteredMoviesList;
           _isLoadingMore = false;
         });
       }
@@ -113,47 +181,202 @@ class _PeliculasViewState extends State<PeliculasView> {
             fit: BoxFit.cover,
           ),
         ),
-        child: _isLoading
-            ? Center(child: CircularProgressIndicator())
-            : _hasError
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.error_outline, color: Colors.red, size: 48),
-                        SizedBox(height: 16),
-                        Text(
-                          'Error al cargar las películas',
-                          style: TextStyle(
-                            color: isDark ? Colors.white70 : Colors.black54,
-                            fontSize: 16,
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _loadMovies,
-                          child: Text('Reintentar'),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 400,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.black38 : Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
-                  )
-                : GridView.builder(
-                    controller: _scrollController,
-                    padding: EdgeInsets.all(16),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 6,
-                      childAspectRatio: 0.6,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
+                    child: TextField(
+                      controller: _searchController,
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Buscar películas...',
+                        hintStyle: TextStyle(
+                          color: isDark ? Colors.white60 : Colors.black45,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: isDark ? Colors.white60 : Colors.black45,
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(
+                                  Icons.clear,
+                                  color: isDark ? Colors.white60 : Colors.black45,
+                                ),
+                                onPressed: _clearSearch,
+                              )
+                            : null,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      ),
                     ),
-                    itemCount: _moviesList.length + (_isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == _moviesList.length) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      return _buildMovieCard(_moviesList[index]);
-                    },
                   ),
+                  SizedBox(width: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.black38 : Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 0,
+                          blurRadius: 5,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.filter_list,
+                            color: isDark ? Colors.white60 : Colors.black45,
+                          ),
+                          tooltip: 'Filtrar por',
+                          onSelected: (String value) {
+                            setState(() {
+                              _isAscending = !_isAscending;
+                            });
+                            _applyFilter(value);
+                          },
+                          itemBuilder: (BuildContext context) => [
+                            PopupMenuItem(
+                              value: 'Fecha de Lanzamiento',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.calendar_today, size: 20),
+                                  SizedBox(width: 8),
+                                  Text('Fecha de Lanzamiento'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'Rating',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.star, size: 20),
+                                  SizedBox(width: 8),
+                                  Text('Rating'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'Letra',
+                              child: Row(
+                                children: [
+                                  Icon(Icons.sort_by_alpha, size: 20),
+                                  SizedBox(width: 8),
+                                  Text('Orden Alfabético'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            _isAscending ? Icons.arrow_upward : Icons.arrow_downward,
+                            color: isDark ? Colors.white60 : Colors.black45,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isAscending = !_isAscending;
+                            });
+                            _applyFilter(_selectedFilter);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : _hasError
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.error_outline, color: Colors.red, size: 48),
+                              SizedBox(height: 16),
+                              Text(
+                                'Error al cargar las películas',
+                                style: TextStyle(
+                                  color: isDark ? Colors.white70 : Colors.black54,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _loadMovies,
+                                child: Text('Reintentar'),
+                              ),
+                            ],
+                          ),
+                        )
+                      : _filteredMoviesList.isEmpty && _searchController.text.isNotEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.movie_filter,
+                                    color: isDark ? Colors.white54 : Colors.black38,
+                                    size: 48,
+                                  ),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    'No se encontraron películas con "${_searchController.text}"',
+                                    style: TextStyle(
+                                      color: isDark ? Colors.white70 : Colors.black54,
+                                      fontSize: 16,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : GridView.builder(
+                              controller: _scrollController,
+                              padding: EdgeInsets.all(16),
+                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 6,
+                                childAspectRatio: 0.6,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20,
+                              ),
+                              itemCount: _filteredMoviesList.length + 
+                                  (!_isSearching && _isLoadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (!_isSearching && index == _filteredMoviesList.length) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                return _buildMovieCard(_filteredMoviesList[index]);
+                              },
+                            ),
+            ),
+          ],
+        ),
       ),
     );
   }

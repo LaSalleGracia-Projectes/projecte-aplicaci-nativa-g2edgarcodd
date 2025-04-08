@@ -1,16 +1,9 @@
-# streamhub
+# StreamHub
 
-A new Flutter project.
+Una nueva red social con la que compartir tus gustos cinematográficos con el mundo.
 
-## Getting Started
+## Sobre StreamHub
 
-This project is a starting point for a Flutter application.
+StreamHub es una red social con el objetivo de simplificar la busqueda de peliculas y series, dar funcionalidades para crear listas de peliculas y reseñas y facilitar la difusion de opiniones del mundo del cine mediante reseñas y blogs.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+StreamHub esta orientada a la comunidad, en vez de a críticos profesionales, por lo que en vez de un sistema númerico de puntuación, StreamHub usa un sistema de reseñas **positivas** o **negativas**, haciendo de la parte textual de la reseña un requisito.

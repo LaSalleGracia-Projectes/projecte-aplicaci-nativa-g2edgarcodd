@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:streamhub/Services/tmdb_service.dart';
 import 'package:streamhub/Models/media_item.dart';
 import 'package:streamhub/theme_provider.dart';
+import 'package:streamhub/Secciones/peliculas.dart';
+import 'package:streamhub/Secciones/series.dart';
 
 class Explorar extends StatefulWidget {
   const Explorar({super.key});
@@ -382,13 +384,41 @@ class _ExplorarState extends State<Explorar> {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
     
-    return Text(
-      title,
-      style: TextStyle(
-        color: isDark ? Colors.white : Colors.black,
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            if (title == 'Películas') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PeliculasView()),
+              );
+            } else if (title == 'Series') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SeriesView()),
+              );
+            }
+          },
+          child: Text(
+            'Ver más',
+            style: TextStyle(
+              color: isDark ? Colors.blue[300] : Colors.blue,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

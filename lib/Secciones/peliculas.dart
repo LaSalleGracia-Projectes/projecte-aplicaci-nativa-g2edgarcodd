@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:streamhub/Services/tmdb_service.dart';
 import 'package:streamhub/Models/media_item.dart';
 import 'package:streamhub/theme_provider.dart';
+import 'package:streamhub/Secciones/Info_Peliculas.dart';
 
 class PeliculasView extends StatefulWidget {
   const PeliculasView({super.key});
@@ -393,10 +394,10 @@ class _PeliculasViewState extends State<PeliculasView> {
     
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Has seleccionado: ${movie.title ?? "Sin título"}'),
-            duration: Duration(seconds: 1),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InfoPeliculasView(movie: movie),
           ),
         );
       },

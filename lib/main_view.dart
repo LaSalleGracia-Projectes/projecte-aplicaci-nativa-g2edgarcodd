@@ -10,8 +10,8 @@ import 'package:provider/provider.dart';
 import 'theme_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:streamhub/Secciones/peliculas.dart';
-import 'package:streamhub/Secciones/series.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/peliculas.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/series.dart';
 
 // Clase para almacenar datos de películas/series de TMDB
 class MediaItem {
@@ -417,7 +417,7 @@ class _MenuState extends State<Menu> {
                 onTap: () {
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
+                    MaterialPageRoute(builder: (context) => PaginaInicio()),
                         (route) => false,
                   );
                 },

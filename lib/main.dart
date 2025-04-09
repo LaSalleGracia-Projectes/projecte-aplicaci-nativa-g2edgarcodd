@@ -4,7 +4,10 @@ import 'Registro/login.dart';
 import 'main_view.dart';
 import 'package:flutter/services.dart';
 import 'theme_provider.dart';
+import 'language_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,8 +17,11 @@ void main() {
     DeviceOrientation.landscapeRight,
   ]);
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => LanguageProvider()),
+      ],
       child: MyApp(),
     ),
   );
@@ -25,19 +31,34 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeProvider.currentTheme,
-      home: HomePage(),
+      locale: Locale(languageProvider.currentLanguage),
+      supportedLocales: [
+        Locale('es'),
+        Locale('en'),
+        Locale('ca'),
+      ],
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: PaginaInicio(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class PaginaInicio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       body: Container(
@@ -49,7 +70,7 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "¡Bienvenido!",
+                l10n.welcome,
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -57,19 +78,19 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30),
-              buildButton(context, "Sin Registro", Colors.orange, () {
+              buildButton(context, l10n.noRegistration, Colors.orange, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Menu()),
                 );
               }),
-              buildButton(context, "Registrarse", Colors.orange, () {
+              buildButton(context, l10n.register, Colors.orange, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RegistroScreen()),
                 );
               }),
-              buildButton(context, "Login", Colors.orange, () {
+              buildButton(context, l10n.login, Colors.orange, () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginScreen(correo: '', password: '')),
@@ -99,7 +120,7 @@ class HomePage extends StatelessWidget {
             shadowColor: Colors.black,
             textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          child: Text(text, style: TextStyle(color: Colors.black)), // Texto en negro
+          child: Text(text, style: TextStyle(color: Colors.black)),
         ),
       ),
     );

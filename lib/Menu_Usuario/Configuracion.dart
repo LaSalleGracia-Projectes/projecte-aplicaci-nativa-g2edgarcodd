@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme_provider.dart';
+import '../language_provider.dart';
 import '../main.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ConfiguracionScreen extends StatefulWidget {
   @override
@@ -10,8 +12,6 @@ class ConfiguracionScreen extends StatefulWidget {
 
 class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTickerProviderStateMixin {
   bool _modoBlancoyNegro = false;
-  String _idiomaSeleccionado = 'Español';
-  final List<String> _idiomas = ['Español', 'Inglés', 'Catalán'];
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -39,12 +39,14 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Configuración',
+          l10n.settings,
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 20,
@@ -107,7 +109,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
 
                   // Sección de Apariencia con padding uniforme
                   _buildSection(
-                    'Apariencia',
+                    l10n.darkMode,
                     Icons.brightness_6_outlined,
                     [
                       Padding(
@@ -119,7 +121,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Modo Oscuro',
+                                  l10n.darkMode,
                                   style: TextStyle(
                                     color: isDark ? Colors.white : Colors.black,
                                     fontSize: 14,
@@ -128,7 +130,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                 ),
                                 SizedBox(height: 3),
                                 Text(
-                                  'Activa o desactiva el tema oscuro',
+                                  l10n.darkModeDescription,
                                   style: TextStyle(
                                     color: isDark ? Colors.white70 : Colors.black54,
                                     fontSize: 12,
@@ -156,7 +158,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
 
                   // Sección de Idioma
                   _buildSection(
-                    'Idioma',
+                    l10n.language,
                     Icons.language_outlined,
                     [
                       Padding(
@@ -165,7 +167,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Selecciona tu idioma preferido',
+                              l10n.selectLanguage,
                               style: TextStyle(
                                 color: isDark ? Colors.white70 : Colors.black54,
                                 fontSize: 14,
@@ -189,7 +191,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                 border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
                               ),
                               child: DropdownButton<String>(
-                                value: _idiomaSeleccionado,
+                                value: languageProvider.currentLanguageName,
                                 dropdownColor: isDark ? Color(0xFF060D17) : Colors.white,
                                 style: TextStyle(
                                   color: isDark ? Colors.white : Colors.black,
@@ -201,16 +203,14 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                 underline: Container(),
                                 onChanged: (String? newValue) {
                                   if (newValue != null) {
-                                    setState(() {
-                                      _idiomaSeleccionado = newValue;
-                                    });
+                                    languageProvider.changeLanguage(languageProvider.getLanguageCode(newValue));
                                     _mostrarMensaje(
                                       'Idioma cambiado a $newValue',
                                       Colors.blue,
                                     );
                                   }
                                 },
-                                items: _idiomas.map<DropdownMenuItem<String>>((String value) {
+                                items: languageProvider.availableLanguageNames.map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -227,13 +227,13 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
 
                   // Sección de Cuenta
                   _buildSection(
-                    'Cuenta',
+                    l10n.account,
                     Icons.account_circle_outlined,
                     [
                       Padding(
                         padding: EdgeInsets.all(12),
                         child: _buildButton(
-                          'Cerrar Sesión',
+                          l10n.logout,
                           Icons.exit_to_app,
                           Colors.red.shade600,
                           () {
@@ -249,17 +249,17 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                     children: [
                                       Icon(Icons.warning_amber_rounded, color: Colors.red, size: 22),
                                       SizedBox(width: 8),
-                                      Text('Cerrar Sesión',
+                                      Text(l10n.logout,
                                           style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16)),
                                     ],
                                   ),
                                   content: Text(
-                                    '¿Estás seguro de que quieres cerrar sesión?',
+                                    l10n.logoutConfirm,
                                     style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 14),
                                   ),
                                   actions: [
                                     TextButton(
-                                      child: Text('Cancelar',
+                                      child: Text(l10n.cancel,
                                           style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 14)),
                                       onPressed: () => Navigator.pop(context),
                                     ),
@@ -270,13 +270,13 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                           borderRadius: BorderRadius.circular(8),
                                         ),
                                       ),
-                                      child: Text('Cerrar Sesión',
+                                      child: Text(l10n.logout,
                                           style: TextStyle(color: Colors.white, fontSize: 14)),
                                       onPressed: () {
                                         Navigator.pushAndRemoveUntil(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => HomePage()),
+                                              builder: (context) => PaginaInicio()),
                                           (route) => false,
                                         );
                                       },
@@ -355,54 +355,6 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
             ),
           ),
           ...children,
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSwitchOption(
-    String title,
-    String subtitle,
-    bool value,
-    Function(bool) onChanged,
-  ) {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    final isDark = themeProvider.isDarkMode;
-    
-    return Padding(
-      padding: EdgeInsets.all(12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 3),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: isDark ? Colors.white70 : Colors.black54,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: Colors.blue,
-            activeTrackColor: Colors.blue.withOpacity(0.3),
-          ),
         ],
       ),
     );

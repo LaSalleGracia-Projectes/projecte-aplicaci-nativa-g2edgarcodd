@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:streamhub/Models/media_item.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/Models/media_item.dart';
 
 class TMDBService {
   static const String _baseUrl = 'https://api.themoviedb.org/3';

@@ -1,0 +1,22 @@
+{
+  "appTitle": "StreamHub",
+  "welcome": "Benvingut!",
+  "noRegistration": "Sense Registre",
+  "register": "Registrar-se",
+  "login": "Iniciar Sessió",
+  "settings": "Configuració",
+  "darkMode": "Mode Fosc",
+  "darkModeDescription": "Activar tema fosc",
+  "language": "Idioma",
+  "selectLanguage": "Selecciona el teu idioma preferit",
+  "account": "Compte",
+  "logout": "Tancar Sessió",
+  "logoutConfirm": "Estàs segur que vols tancar la sessió?",
+  "cancel": "Cancel·lar",
+  "movies": "Pel·lícules",
+  "series": "Sèries",
+  "seeMore": "Veure Més",
+  "genres": "Gèneres",
+  "search": "Cercar",
+  "noResults": "No s'han trobat resultats"
+} 

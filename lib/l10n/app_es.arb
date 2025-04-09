@@ -1,0 +1,22 @@
+{
+  "appTitle": "StreamHub",
+  "welcome": "¡Bienvenido!",
+  "noRegistration": "Sin Registro",
+  "register": "Registrarse",
+  "login": "Iniciar Sesión",
+  "settings": "Configuración",
+  "darkMode": "Modo Oscuro",
+  "darkModeDescription": "Activar tema oscuro",
+  "language": "Idioma",
+  "selectLanguage": "Selecciona tu idioma preferido",
+  "account": "Cuenta",
+  "logout": "Cerrar Sesión",
+  "logoutConfirm": "¿Estás seguro de que quieres cerrar sesión?",
+  "cancel": "Cancelar",
+  "movies": "Películas",
+  "series": "Series",
+  "seeMore": "Ver Más",
+  "genres": "Géneros",
+  "search": "Buscar",
+  "noResults": "No se han encontrado resultados"
+} 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:streamhub/Services/tmdb_service.dart';
-import 'package:streamhub/Models/media_item.dart';
-import 'package:streamhub/theme_provider.dart';
-import 'package:streamhub/Secciones/Info_Peliculas.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/Services/tmdb_service.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/Models/media_item.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/theme_provider.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/Info_Peliculas.dart';
 
 class PeliculasView extends StatefulWidget {
   const PeliculasView({super.key});

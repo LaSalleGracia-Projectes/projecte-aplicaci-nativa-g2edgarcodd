@@ -5,6 +5,8 @@ import 'package:projecte_aplicaci_nativa_g2edgarcodd/Models/media_item.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/theme_provider.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/peliculas.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/series.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/Info_Peliculas.dart';
+import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/Info_Series.dart';
 
 class Explorar extends StatefulWidget {
   const Explorar({super.key});
@@ -649,10 +651,10 @@ class _ExplorarState extends State<Explorar> {
     
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Has seleccionado: ${movie.title ?? "Sin título"}'),
-            duration: Duration(seconds: 1),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InfoPeliculasView(movie: movie),
           ),
         );
       },
@@ -817,10 +819,10 @@ class _ExplorarState extends State<Explorar> {
     
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Has seleccionado: ${serie.title ?? "Sin título"}'),
-            duration: Duration(seconds: 1),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InfoSeriesView(series: serie),
           ),
         );
       },

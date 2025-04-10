@@ -196,7 +196,29 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
         _isLoading = false;
       });
       print("Error cargando detalles de la serie: $e");
+      _showErrorDialog();
     }
+  }
+
+  void _showErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Información no disponible'),
+          content: Text('Los detalles de la serie no están disponibles en este momento.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop(); // Volver a la pantalla anterior
+              },
+              child: Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _loadReviews() async {

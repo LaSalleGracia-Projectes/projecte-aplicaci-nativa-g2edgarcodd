@@ -6,6 +6,22 @@ import 'package:projecte_aplicaci_nativa_g2edgarcodd/Services/tmdb_service.dart'
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+class Review {
+  final String author;
+  final String content;
+  final String? avatarPath;
+  final double rating;
+  final String createdAt;
+
+  Review({
+    required this.author,
+    required this.content,
+    this.avatarPath,
+    required this.rating,
+    required this.createdAt,
+  });
+}
+
 class SeriesDetails {
   final String overview;
   final List<String> genres;
@@ -19,6 +35,7 @@ class SeriesDetails {
   final int numberOfSeasons;
   final String firstAirDate;
   final String lastAirDate;
+  final List<Review> reviews;
 
   SeriesDetails({
     required this.overview,
@@ -33,6 +50,7 @@ class SeriesDetails {
     required this.numberOfSeasons,
     required this.firstAirDate,
     required this.lastAirDate,
+    required this.reviews,
   });
 }
 
@@ -91,6 +109,10 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
   SeriesDetails? _seriesDetails;
   bool _isLoading = true;
   bool _hasError = false;
+  bool _isLoadingMore = false;
+  int _currentPage = 1;
+  int _totalPages = 1;
+  List<Review> _allReviews = [];
 
   @override
   void initState() {
@@ -115,6 +137,8 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
           'accept': 'application/json',
         },
       );
+
+      await _loadReviews();
 
       if (response.statusCode == 200 && creditsResponse.statusCode == 200) {
         final seriesData = json.decode(response.body);
@@ -159,6 +183,7 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
             numberOfSeasons: seriesData['number_of_seasons'] ?? 0,
             firstAirDate: seriesData['first_air_date'] ?? 'Sin fecha',
             lastAirDate: seriesData['last_air_date'] ?? 'Sin fecha',
+            reviews: _allReviews,
           );
           _isLoading = false;
         });
@@ -172,6 +197,83 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
       });
       print("Error cargando detalles de la serie: $e");
     }
+  }
+
+  Future<void> _loadReviews() async {
+    try {
+      final reviewsResponse = await http.get(
+        Uri.parse('https://api.themoviedb.org/3/tv/${widget.series.id}/reviews?page=$_currentPage'),
+        headers: {
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYTQ5MTJmMjA4ZDhjOTAwMGI4ZDhkMDA5YzI4ZTJiNSIsIm5iZiI6MTc0MzY5NTA2NS40ODcsInN1YiI6IjY3ZWVhY2Q5MTVmNmJhODZmMWUxYTcwMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.yACTJlfSWaWUvtN7Iak36-gIqxlsh1JKzoFBa0hxNDU',
+          'accept': 'application/json',
+        },
+      );
+
+      if (reviewsResponse.statusCode == 200) {
+        final reviewsData = json.decode(reviewsResponse.body);
+        _totalPages = reviewsData['total_pages'] ?? 1;
+        
+        final newReviews = (reviewsData['results'] as List)
+            .map((review) => Review(
+                  author: review['author'] ?? 'Anónimo',
+                  content: review['content'] ?? 'Sin contenido',
+                  avatarPath: review['author_details']?['avatar_path'],
+                  rating: (review['author_details']?['rating'] ?? 0).toDouble(),
+                  createdAt: review['created_at'] ?? '',
+                ))
+            .toList();
+
+        setState(() {
+          if (_currentPage == 1) {
+            _allReviews = newReviews;
+          } else {
+            _allReviews.addAll(newReviews);
+          }
+          _isLoadingMore = false;
+        });
+
+        if (_seriesDetails != null) {
+          setState(() {
+            _seriesDetails = SeriesDetails(
+              overview: _seriesDetails!.overview,
+              genres: _seriesDetails!.genres,
+              seasons: _seriesDetails!.seasons,
+              cast: _seriesDetails!.cast,
+              crew: _seriesDetails!.crew,
+              tagline: _seriesDetails!.tagline,
+              status: _seriesDetails!.status,
+              originalLanguage: _seriesDetails!.originalLanguage,
+              numberOfEpisodes: _seriesDetails!.numberOfEpisodes,
+              numberOfSeasons: _seriesDetails!.numberOfSeasons,
+              firstAirDate: _seriesDetails!.firstAirDate,
+              lastAirDate: _seriesDetails!.lastAirDate,
+              reviews: _allReviews,
+            );
+          });
+        }
+      }
+    } catch (e) {
+      print("Error cargando reseñas: $e");
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
+  }
+
+  Future<void> _loadMoreReviews() async {
+    if (!_isLoadingMore && _currentPage < _totalPages) {
+      setState(() {
+        _isLoadingMore = true;
+      });
+      _currentPage++;
+      await _loadReviews();
+    }
+  }
+
+  Color _getRatingColor(double rating) {
+    if (rating >= 8) return Colors.green;
+    if (rating >= 6) return Colors.orange;
+    return Colors.red;
   }
 
   @override
@@ -555,6 +657,155 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                       ),
                                     )),
                                 SizedBox(height: 32),
+                                if (_seriesDetails!.reviews.isNotEmpty) ...[
+                                  SizedBox(height: 24),
+                                  Text(
+                                    'Mejores Reseñas',
+                                    style: TextStyle(
+                                      color: isDark ? Colors.white : Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 16),
+                                  ...(_seriesDetails!.reviews.map((review) => Container(
+                                        margin: EdgeInsets.only(bottom: 16),
+                                        padding: EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? Colors.black38 : Colors.grey[200],
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundImage: review.avatarPath != null
+                                                      ? NetworkImage(TMDBService.getImageUrl(review.avatarPath!))
+                                                      : null,
+                                                  child: review.avatarPath == null
+                                                      ? Icon(Icons.person, size: 20)
+                                                      : null,
+                                                ),
+                                                SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        review.author,
+                                                        style: TextStyle(
+                                                          color: isDark ? Colors.white : Colors.black,
+                                                          fontSize: 16,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        DateTime.parse(review.createdAt)
+                                                            .toLocal()
+                                                            .toString()
+                                                            .split(' ')[0],
+                                                        style: TextStyle(
+                                                          color: isDark ? Colors.white70 : Colors.black54,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                if (review.rating > 0)
+                                                  Container(
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: _getRatingColor(review.rating),
+                                                      borderRadius: BorderRadius.circular(12),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Icon(Icons.star, color: Colors.white, size: 16),
+                                                        SizedBox(width: 4),
+                                                        Text(
+                                                          review.rating.toString(),
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 12),
+                                            Text(
+                                              review.content,
+                                              style: TextStyle(
+                                                color: isDark ? Colors.white70 : Colors.black87,
+                                                fontSize: 14,
+                                              ),
+                                              maxLines: 5,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ))),
+                                  SizedBox(height: 16),
+                                  Center(
+                                    child: _isLoadingMore
+                                        ? CircularProgressIndicator()
+                                        : _currentPage < _totalPages
+                                            ? ElevatedButton(
+                                                onPressed: _loadMoreReviews,
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: isDark ? Colors.blue : Colors.blue,
+                                                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      'Cargar más reseñas',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 8),
+                                                    Icon(Icons.refresh, color: Colors.white),
+                                                  ],
+                                                ),
+                                              )
+                                            : Text(
+                                                'No hay más reseñas disponibles',
+                                                style: TextStyle(
+                                                  color: isDark ? Colors.white70 : Colors.black54,
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                  ),
+                                ] else
+                                Container(
+                                  padding: EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? Colors.black38 : Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      'No hay reseñas disponibles',
+                                      style: TextStyle(
+                                        color: isDark ? Colors.white70 : Colors.black54,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),

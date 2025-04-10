@@ -758,13 +758,13 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Imagen de la noticia
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
                 child: Image.network(
                   imageUrl,
-                  width: 150,
-                  height: 200,
-                  fit: BoxFit.cover,
+              width: 150,
+              height: 200,
+              fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       width: 150,
@@ -775,14 +775,14 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                       ),
                     );
                   },
-                ),
-              ),
-              SizedBox(width: 20),
+            ),
+          ),
+          SizedBox(width: 20),
               // Información de la noticia
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                     Row(
                       children: [
                         Container(
@@ -826,22 +826,22 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                       ],
                     ),
                     SizedBox(height: 8),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        color: isDark ? Colors.white70 : Colors.black54,
-                        fontSize: 16,
-                        height: 1.5,
-                      ),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.black54,
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1083,8 +1083,8 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                     SizedBox(width: 20),
                   ],
                 ),
-              ),
             ),
+          ),
         ],
       ),
     );

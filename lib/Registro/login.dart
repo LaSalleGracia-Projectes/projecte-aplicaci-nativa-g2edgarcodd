@@ -134,21 +134,64 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void verificarCredenciales() {
+  void verificarCredenciales() async {
     String correoIngresado = correoController.text.trim();
     String passwordIngresada = passwordController.text.trim();
 
     if (correoIngresado.isEmpty || passwordIngresada.isEmpty) {
       showMessage("Información incompleta", Colors.orange);
-    } else if (correoIngresado == widget.correo && passwordIngresada == widget.password) {
-      showMessage("Login exitoso", Colors.green);
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => Menu()),
-            (route) => false,
+      return;
+    }
+
+    try {
+      // Codificar los parámetros en la URL para el método GET
+      final queryParameters = {
+        'email': correoIngresado,
+        'password': passwordIngresada,
+      };
+
+      final uri = Uri.http('192.168.194.245:8000', '/api/login', queryParameters);
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Accept': 'application/json',
+        },
       );
-    } else {
-      showMessage("Correo y/o contraseña incorrectos", Colors.red);
+
+      if (response.body.isEmpty) {
+        showMessage("Error: Respuesta vacía del servidor", Colors.red);
+        return;
+      }
+
+      try {
+        final responseData = json.decode(response.body);
+
+        if (response.statusCode == 200 && responseData['success'] == true) {
+          // Guardar el token de acceso
+          final String accessToken = responseData['access_token'];
+          final String tokenType = responseData['token_type'];
+          
+          showMessage(responseData['message'], Colors.green);
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Menu()),
+            (route) => false,
+          );
+        } else {
+          // Login fallido
+          showMessage(responseData['message'] ?? "Credenciales incorrectas", Colors.red);
+        }
+      } catch (e) {
+        showMessage("Error al procesar la respuesta del servidor", Colors.red);
+      }
+    } catch (e) {
+      // Error de conexión
+      if (e.toString().contains('SocketException')) {
+        showMessage("Error de conexión: No se pudo conectar al servidor", Colors.red);
+      } else {
+        showMessage("Error de conexión: ${e.toString()}", Colors.red);
+      }
     }
   }
 

@@ -41,7 +41,11 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
     final themeProvider = Provider.of<ThemeProvider>(context);
     final languageProvider = Provider.of<LanguageProvider>(context);
     final isDark = themeProvider.isDarkMode;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    
+    if (l10n == null) {
+      return Center(child: CircularProgressIndicator());
+    }
 
     return Scaffold(
       appBar: AppBar(

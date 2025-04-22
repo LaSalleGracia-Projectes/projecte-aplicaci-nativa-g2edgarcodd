@@ -2,12 +2,84 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '/main.dart';
 import '/Registro/login.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class RegistroScreen extends StatelessWidget {
-  final TextEditingController nombreController = TextEditingController();
-  final TextEditingController correoController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController surnameController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+
+  Future<void> registrarUsuario(BuildContext context) async {
+    String username = usernameController.text.trim();
+    String name = nameController.text.trim();
+    String surname = surnameController.text.trim();
+    String dateOfBirth = dateController.text.trim();
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String confirmPassword = confirmPasswordController.text.trim();
+
+    // Validaciones básicas
+    if (username.isEmpty || name.isEmpty || surname.isEmpty || dateOfBirth.isEmpty || 
+        email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      showMessage(context, "Por favor completa todos los campos", Colors.red);
+      return;
+    }
+
+    if (!email.contains("@") || !email.contains(".")) {
+      showMessage(context, "Correo inválido", Colors.orange);
+      return;
+    }
+
+    if (password.length < 6) {
+      showMessage(context, "La contraseña debe tener al menos 6 caracteres", Colors.orange);
+      return;
+    }
+
+    if (password != confirmPassword) {
+      showMessage(context, "Las contraseñas no coinciden", Colors.red);
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.194.245:8000/api/register'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode({
+          'username': username,
+          'name': name,
+          'surname': surname,
+          'date_of_birth': dateOfBirth,
+          'email': email,
+          'password': password,
+          'password_confirmation': confirmPassword,
+        }),
+      );
+
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200 && responseData['sucess'] == true) {
+        showMessage(context, responseData['message'], Colors.green);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(correo: email, password: password),
+          ),
+        );
+      } else {
+        showMessage(context, responseData['message'] ?? "Error en el registro", Colors.red);
+      }
+    } catch (e) {
+      showMessage(context, "Error de conexión: ${e.toString()}", Colors.red);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,17 +135,33 @@ class RegistroScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 30),
                       buildTextField(
-                        controller: nombreController,
-                        label: "Nombre completo",
-                        icon: Icons.person,
-                        isPassword: false,
+                        controller: usernameController,
+                        label: "Nombre de usuario",
+                        icon: Icons.person_outline,
                       ),
                       SizedBox(height: 15),
                       buildTextField(
-                        controller: correoController,
+                        controller: nameController,
+                        label: "Nombre",
+                        icon: Icons.person,
+                      ),
+                      SizedBox(height: 15),
+                      buildTextField(
+                        controller: surnameController,
+                        label: "Apellidos",
+                        icon: Icons.person,
+                      ),
+                      SizedBox(height: 15),
+                      buildTextField(
+                        controller: dateController,
+                        label: "Fecha de nacimiento (YYYY-MM-DD)",
+                        icon: Icons.calendar_today,
+                      ),
+                      SizedBox(height: 15),
+                      buildTextField(
+                        controller: emailController,
                         label: "Correo electrónico",
                         icon: Icons.email,
-                        isPassword: false,
                         keyboardType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: 15),
@@ -95,40 +183,21 @@ class RegistroScreen extends StatelessWidget {
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: () {
-                            String nombre = nombreController.text.trim();
-                            String correo = correoController.text.trim();
-                            String password = passwordController.text.trim();
-                            String confirmPassword = confirmPasswordController.text.trim();
-
-                            if (nombre.isEmpty || correo.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-                              showMessage(context, "Por favor completa todos los campos", Colors.red);
-                            } else if (!correo.contains("@") || !correo.contains(".")) {
-                              showMessage(context, "Correo inválido", Colors.orange);
-                            } else if (password.length < 6) {
-                              showMessage(context, "La contraseña debe tener al menos 6 caracteres", Colors.orange);
-                            } else if (password != confirmPassword) {
-                              showMessage(context, "Las contraseñas no coinciden", Colors.red);
-                            } else {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginScreen(correo: correo, password: password),
-                                ),
-                              );
-                            }
-                          },
+                          onPressed: () => registrarUsuario(context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFFFCB500),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
                             elevation: 5,
-                            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           child: Text(
-                            "Continuar →",
-                            style: TextStyle(color: Colors.black),
+                            "Registrarse →",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
                       ),
@@ -138,7 +207,7 @@ class RegistroScreen extends StatelessWidget {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LoginScreen(correo: '', password: ''), // Ajusta los valores según sea necesario
+                              builder: (context) => LoginScreen(correo: '', password: ''),
                             ),
                           );
                         },

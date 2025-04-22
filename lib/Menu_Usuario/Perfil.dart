@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'Editar_Perfil.dart';
 import 'package:provider/provider.dart';
 import '../theme_provider.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class PerfilScreen extends StatefulWidget {
+  final String? token;
+  
+  PerfilScreen({this.token});
+
   @override
   _PerfilScreenState createState() => _PerfilScreenState();
 }
@@ -15,6 +21,68 @@ class _PerfilScreenState extends State<PerfilScreen> {
   final TextEditingController correoController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _passwordVisible = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      String token = widget.token ?? "11|Gt4FFtLcWsOY61ImE3Bbd6J9IMF2TFtHPDOjKLVtea3cbeca";
+      
+      print('Iniciando petición al servidor...');
+      print('Token usado: $token');
+
+      // Construir la URL con los parámetros query
+      final queryParameters = {
+        'token': token,
+        'user_id': '13'
+      };
+
+      final response = await http.get(
+        Uri.http('192.168.194.245:8000', '/api/getUser', queryParameters),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('URL de la petición: ${Uri.http('192.168.194.245:8000', '/api/getUser', queryParameters)}');
+      print('Código de estado: ${response.statusCode}');
+      print('Cuerpo de la respuesta: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        
+        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+          final userData = jsonResponse['data'];
+          setState(() {
+            nombreController.text = userData['name'] ?? '';
+            apellidoController.text = userData['surname'] ?? '';
+            usuarioController.text = userData['username'] ?? '';
+            correoController.text = userData['email'] ?? '';
+            _isLoading = false;
+          });
+          print('Datos de usuario cargados exitosamente');
+        } else {
+          throw Exception('La respuesta no tiene el formato esperado');
+        }
+      } else {
+        print('Error en la respuesta: ${response.statusCode}');
+        print('Mensaje de error: ${response.body}');
+        setState(() => _isLoading = false);
+        showMessage('Error al cargar los datos del usuario: ${response.statusCode}', Colors.red);
+      }
+    } catch (e) {
+      print('Error en _loadUserData: $e');
+      setState(() => _isLoading = false);
+      showMessage('Error de conexión: ${e.toString()}', Colors.red);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +90,31 @@ class _PerfilScreenState extends State<PerfilScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
     
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
+        appBar: AppBar(
+          title: Text('Mi Perfil',
+            style: TextStyle(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 24,
+              fontWeight: FontWeight.bold
+            )
+          ),
+          backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
+          elevation: 0,
+          iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
+        ),
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+              isDark ? Colors.white : Colors.blue.shade900,
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Mi Perfil', 

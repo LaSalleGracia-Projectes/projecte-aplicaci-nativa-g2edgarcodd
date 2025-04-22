@@ -394,11 +394,28 @@ class _MenuState extends State<Menu> {
               ListTile(
                 leading: Icon(Icons.person, color: isDark ? Colors.white : Colors.black87),
                 title: Text('Perfil', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PerfilScreen()),
-                  );
+                onTap: () async {
+                  try {
+                    final token = "11|Gt4FFtLcWsOY61ImE3Bbd6J9IMF2TFtHPDOjKLVtea3cbeca"; // Token de prueba
+                    print('Navegando a perfil con token: $token');
+                    
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PerfilScreen(
+                          token: token,
+                        ),
+                      ),
+                    );
+                  } catch (e) {
+                    print('Error al navegar al perfil: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error al cargar el perfil: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
               ),
               ListTile(

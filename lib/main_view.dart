@@ -171,25 +171,22 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   final PageController _pageController = PageController();
-  int _currentPage = 0;
-  final int _totalPages = 2;
-  late Timer _timer;
   
   // Listas para almacenar datos de la API
   List<MediaItem> _continueWatchingItems = [];
   List<MediaItem> _newReleaseItems = [];
+  List<Map<String, String>> _items = []; // Lista para los elementos del carrusel
   bool _isLoading = true;
   String _selectedFilter = 'Todo';
-
-  final List<Map<String, String>> _items=[];
 
   @override
   void initState() {
     super.initState();
-    _startAutoSlide();
+    // No necesitamos _startAutoSlide ya que CarouselSlider tiene su propio autoplay
     _loadData();
     _fetchMongoData();
   }
+
   Future<void> _fetchMongoData() async {
     try {
       var mongoDB = mongo.Db('mongodb://localhost:27017/streamhub');
@@ -210,10 +207,10 @@ class _MenuState extends State<Menu> {
 
       await mongoDB.close();
     } catch (e) {
-      log("Error al conectar a MongoDB: $e");
+      log("Error al conectar a MongoDB: $e");
+      }
     }
-  }
-
+  
   // Cargar datos de la API
   Future<void> _loadData() async {
     setState(() {
@@ -226,33 +223,30 @@ class _MenuState extends State<Menu> {
       // Para "Nuevos lanzamientos" usaremos próximos estrenos
       final upcoming = await TMDBService.getUpcomingMovies();
       
+      // Crear elementos para el carrusel principal
+      final List<Map<String, String>> carouselItems = [];
+      for (var item in upcoming.take(5)) {
+        carouselItems.add({
+          'titulo': item.title,
+          'portada': TMDBService.getImageUrl(item.posterPath),
+          'descripcion': item.overview,
+        });
+      }
+      
       setState(() {
-        // Limitamos a algunos elementos para no sobrecargar la interfaz
-        _continueWatchingItems = popular.take(6).toList();
-        _newReleaseItems = upcoming.take(8).toList();
+        _continueWatchingItems = popular;
+        _newReleaseItems = upcoming;
+        _items = carouselItems;
         _isLoading = false;
       });
     } catch (e) {
-      print('Error cargando datos: $e');
+      print("Error cargando datos: $e");
       setState(() {
         _isLoading = false;
       });
     }
   }
 
-  void _startAutoSlide() {
-    _timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      setState(() {
-        _currentPage = (_currentPage + 1) % _totalPages;
-        _pageController.animateToPage(
-          _currentPage,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      });
-    });
-  }
-  
   // Filtrar contenido por tipo
   void _filterContent(String filter) {
     setState(() {
@@ -304,7 +298,7 @@ class _MenuState extends State<Menu> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    // Ya no necesitamos cancelar el timer porque no usamos _startAutoSlide
     _pageController.dispose();
     super.dispose();
   }
@@ -482,60 +476,95 @@ class _MenuState extends State<Menu> {
               Container(
                 height: MediaQuery.of(context).size.height * 0.6,
                 width: MediaQuery.of(context).size.width,
-                child: PageView(
-                  controller: _pageController,
-                  children: List.generate(
-                    _totalPages,
-                        (index) => Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Center(
-                            child: Image.asset(
-                              'images/logoPrueba.png',
-                              width: 150,
-                              height: 150,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 6,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                child: Container(
+                  color: isDark ? Color(0xFF060D17) : Colors.white,
+                  child: Center(
+                    child: _items.isEmpty
+                        ? CircularProgressIndicator()
+                        : CarouselSlider(
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        enlargeCenterPage: true,
+                        aspectRatio: 16 / 9,
+                        viewportFraction: 0.85,
+                        height: MediaQuery.of(context).size.height * 0.55,
+                      ),
+                      items: _items.map((item) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            double posterHeight = MediaQuery.of(context).size.height * 0.4;
+                            return Container(
+                              margin: EdgeInsets.all(5.0),
+                              decoration: BoxDecoration(
+                                color: isDark ? Color(0xFF060D17) : Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  CircleAvatar(
-                                    radius: 50,
-                                    backgroundImage: AssetImage(
-                                      'images/logoPrueba.png',
+                                  Expanded(
+                                    flex: 6,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            item['titulo'] ?? '',
+                                            style: TextStyle(
+                                              color: isDark ? Color(0xFFF6F6F7) : Colors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Container(
+                                          height: posterHeight,
+                                          child: item['portada']!.isNotEmpty
+                                              ? Image.network(
+                                            item['portada']!,
+                                            fit: BoxFit.contain,
+                                            width: double.infinity,
+                                            errorBuilder: (context, error, stackTrace) =>
+                                                Icon(Icons.error, color: isDark ? Color(0xFFF6F6F7) : Colors.black),
+                                          )
+                                              : Icon(Icons.image, size: 50, color: isDark ? Color(0xFFF6F6F7) : Colors.black),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  SizedBox(width: 20),
                                   Expanded(
-                                    child: Text(
-                                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-                                      style: TextStyle(fontSize: 16, color: isDark ? Color(0xFFF6F6F7) : Colors.black),
-                                      maxLines: 8,
-                                      overflow: TextOverflow.fade,
-                                      softWrap: true,
+                                    flex: 4,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 30,
+                                            backgroundImage: NetworkImage(
+                                                'https://via.placeholder.com/100'),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            "Lorem Ipsum",
+                                            style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 10),
-                              ElevatedButton(
-                                onPressed: () {},
-                                child: Text('Leer más'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                            );
+                          },
+                        );
+                      }).toList(),
                     ),
                   ),
                 ),

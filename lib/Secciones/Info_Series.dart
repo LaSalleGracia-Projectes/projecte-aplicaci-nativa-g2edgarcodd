@@ -113,6 +113,16 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
   int _currentPage = 1;
   int _totalPages = 1;
   List<Review> _allReviews = [];
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _bodyController = TextEditingController();
+  bool _isPositive = true;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _bodyController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -298,6 +308,199 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
     return Colors.red;
   }
 
+  Future<void> _createReview() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final themeProvider = Provider.of<ThemeProvider>(context);
+        final isDark = themeProvider.isDarkMode;
+        
+        return AlertDialog(
+          backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
+          title: Text(
+            'Crear Review',
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _titleController,
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                  decoration: InputDecoration(
+                    labelText: 'Título',
+                    labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: isDark ? Colors.white30 : Colors.black26),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  controller: _bodyController,
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    labelText: 'Contenido',
+                    labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: isDark ? Colors.white30 : Colors.black26),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  children: [
+                    Text(
+                      'Valoración:',
+                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                    ),
+                    SizedBox(width: 16),
+                    Switch(
+                      value: _isPositive,
+                      activeColor: Colors.green,
+                      inactiveTrackColor: Colors.red.withOpacity(0.5),
+                      onChanged: (value) {
+                        setState(() {
+                          _isPositive = value;
+                        });
+                      },
+                    ),
+                    Text(
+                      _isPositive ? 'Positiva' : 'Negativa',
+                      style: TextStyle(
+                        color: _isPositive ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Validar que los campos no estén vacíos
+                if (_titleController.text.isEmpty || _bodyController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Por favor, completa todos los campos'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                try {
+                  // Guardar los datos antes de limpiar los campos
+                  final reviewTitle = _titleController.text;
+                  final reviewBody = _bodyController.text;
+                  
+                  final response = await http.post(
+                    Uri.parse('http://25.17.74.119:8000/api/createReview'),
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: json.encode({
+                      'title': reviewTitle,
+                      'body': reviewBody,
+                      'is_positive': _isPositive,
+                      'user_id': 1, // Valor por defecto
+                      'movie_id': widget.series.id.toString(), // Convertir a string para asegurar compatibilidad
+                    }),
+                  );
+
+                  if (response.statusCode == 200 || response.statusCode == 201) {
+                    // Limpiar los campos
+                    _titleController.clear();
+                    _bodyController.clear();
+                    
+                    // Cerrar el diálogo
+                    Navigator.of(context).pop();
+                    
+                    // Añadir la nueva review a la lista existente
+                    final responseData = json.decode(response.body);
+                    
+                    // Crear una nueva review con los datos guardados
+                    final newReview = Review(
+                      author: "Tú", // O puedes usar un nombre de usuario almacenado
+                      content: reviewTitle + ": " + reviewBody, // Combinar título y cuerpo para mostrar en la review
+                      avatarPath: null,
+                      rating: _isPositive ? 10.0 : 3.0, // Asignar una calificación basada en si es positiva o no
+                      createdAt: DateTime.now().toIso8601String(),
+                    );
+                    
+                    setState(() {
+                      _allReviews.insert(0, newReview); // Insertar al principio de la lista
+                      
+                      // Actualizar las reviews en series details
+                      if (_seriesDetails != null) {
+                        _seriesDetails = SeriesDetails(
+                          overview: _seriesDetails!.overview,
+                          genres: _seriesDetails!.genres,
+                          seasons: _seriesDetails!.seasons,
+                          cast: _seriesDetails!.cast,
+                          crew: _seriesDetails!.crew,
+                          tagline: _seriesDetails!.tagline,
+                          status: _seriesDetails!.status,
+                          originalLanguage: _seriesDetails!.originalLanguage,
+                          numberOfEpisodes: _seriesDetails!.numberOfEpisodes,
+                          numberOfSeasons: _seriesDetails!.numberOfSeasons,
+                          firstAirDate: _seriesDetails!.firstAirDate,
+                          lastAirDate: _seriesDetails!.lastAirDate,
+                          reviews: _allReviews,
+                        );
+                      }
+                    });
+                    
+                    // Mostrar un mensaje de éxito
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Review creada con éxito'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    print('Error response body: ${response.body}');
+                    throw Exception('Error al crear la review: ${response.statusCode}');
+                  }
+                } catch (e) {
+                  print('Error al crear la review: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error al crear la review: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                'Guardar',
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -310,6 +513,14 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
         backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
+        actions: [
+          // Botón para crear una review
+          IconButton(
+            icon: Icon(Icons.rate_review),
+            tooltip: 'Crear Review',
+            onPressed: _createReview,
+          ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -689,6 +900,31 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Total: ${_allReviews.length} reseñas',
+                                        style: TextStyle(
+                                          color: isDark ? Colors.white70 : Colors.black54,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      ElevatedButton.icon(
+                                        onPressed: _createReview,
+                                        icon: Icon(Icons.add),
+                                        label: Text('Crear Review'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                   SizedBox(height: 16),
                                   ...(_seriesDetails!.reviews.map((review) => Container(
                                         margin: EdgeInsets.only(bottom: 16),
@@ -818,14 +1054,29 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                     color: isDark ? Colors.black38 : Colors.grey[200],
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      'No hay reseñas disponibles',
-                                      style: TextStyle(
-                                        color: isDark ? Colors.white70 : Colors.black54,
-                                        fontSize: 16,
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'No hay reseñas disponibles',
+                                        style: TextStyle(
+                                          color: isDark ? Colors.white70 : Colors.black54,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
+                                      SizedBox(height: 16),
+                                      ElevatedButton.icon(
+                                        onPressed: _createReview,
+                                        icon: Icon(Icons.add),
+                                        label: Text('Crear Review'),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],

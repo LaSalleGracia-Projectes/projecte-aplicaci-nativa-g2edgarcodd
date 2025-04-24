@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
         'password': passwordIngresada,
       };
 
-      final uri = Uri.http('192.168.194.245:8000', '/api/login', queryParameters);
+      final uri = Uri.http('25.17.74.119:8000', '/api/login', queryParameters);
 
       final response = await http.get(
         uri,

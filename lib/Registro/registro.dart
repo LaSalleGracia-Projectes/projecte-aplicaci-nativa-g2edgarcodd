@@ -47,7 +47,7 @@ class RegistroScreen extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.194.245:8000/api/register'),
+        Uri.parse('http://25.17.74.119:8000/api/register'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

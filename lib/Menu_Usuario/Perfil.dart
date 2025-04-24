@@ -43,7 +43,7 @@ class _PerfilScreenState extends State<PerfilScreen> {
       };
 
       final response = await http.get(
-        Uri.http('192.168.194.245:8000', '/api/getUser', queryParameters),
+        Uri.http('25.17.74.119:8000', '/api/getUser', queryParameters),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',

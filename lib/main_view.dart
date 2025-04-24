@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'Menu_Usuario/Perfil.dart';
 import 'Menu_Usuario/Configuracion.dart';
@@ -12,6 +13,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/peliculas.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/series.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mongo;
+import 'package:carousel_slider/carousel_slider.dart';
 
 // Clase para almacenar datos de películas/series de TMDB
 class MediaItem {
@@ -178,13 +181,39 @@ class _MenuState extends State<Menu> {
   bool _isLoading = true;
   String _selectedFilter = 'Todo';
 
+  final List<Map<String, String>> _items=[];
+
   @override
   void initState() {
     super.initState();
     _startAutoSlide();
     _loadData();
+    _fetchMongoData();
   }
-  
+  Future<void> _fetchMongoData() async {
+    try {
+      var mongoDB = mongo.Db('mongodb://localhost:27017/streamhub');
+      await mongoDB.open();
+      log("Conectado a Mongo");
+      var collection = mongoDB.collection('content');
+      var docs = await collection.find().toList();
+      setState(() {
+        _items.clear();
+        for (var doc in docs) {
+          _items.add({
+            'titulo': doc['#TITLE']?.toString() ?? 'Título no Disponible',
+            'portada': doc['#IMG_POSTER'].toString(),
+          });
+        }
+      });
+      log("Contenido de _items: ${_items.toString()}");
+
+      await mongoDB.close();
+    } catch (e) {
+      log("Error al conectar a MongoDB: $e");
+    }
+  }
+
   // Cargar datos de la API
   Future<void> _loadData() async {
     setState(() {

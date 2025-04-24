@@ -5,6 +5,7 @@ import 'package:projecte_aplicaci_nativa_g2edgarcodd/Models/media_item.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Services/tmdb_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Review {
   final String author;
@@ -113,6 +114,7 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
   int _currentPage = 1;
   int _totalPages = 1;
   List<Review> _allReviews = [];
+  List<Review> _userReviews = [];
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _bodyController = TextEditingController();
   bool _isPositive = true;
@@ -128,6 +130,7 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
   void initState() {
     super.initState();
     _loadSeriesDetails();
+    _loadSavedReviews();
   }
 
   Future<void> _loadSeriesDetails() async {
@@ -308,6 +311,62 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
     return Colors.red;
   }
 
+  Future<void> _loadSavedReviews() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedReviews = prefs.getStringList('reviews_series_${widget.series.id}');
+      
+      if (savedReviews != null && savedReviews.isNotEmpty) {
+        final reviews = savedReviews.map((reviewJson) {
+          final data = json.decode(reviewJson);
+          return Review(
+            author: data['author'] ?? 'Tú',
+            content: data['content'] ?? '',
+            avatarPath: data['avatarPath'],
+            rating: (data['rating'] ?? 0).toDouble(),
+            createdAt: data['createdAt'] ?? DateTime.now().toIso8601String(),
+          );
+        }).toList();
+        
+        setState(() {
+          _userReviews = reviews;
+        });
+      }
+    } catch (e) {
+      print('Error cargando reviews guardadas: $e');
+    }
+  }
+
+  Future<void> _saveReview(Review review) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedReviews = prefs.getStringList('reviews_series_${widget.series.id}') ?? [];
+      
+      final reviewMap = {
+        'author': review.author,
+        'content': review.content,
+        'avatarPath': review.avatarPath,
+        'rating': review.rating,
+        'createdAt': review.createdAt,
+      };
+      
+      savedReviews.add(json.encode(reviewMap));
+      await prefs.setStringList('reviews_series_${widget.series.id}', savedReviews);
+    } catch (e) {
+      print('Error guardando review: $e');
+    }
+  }
+
+  List<Review> get _combinedReviews {
+    final List<Review> combinedList = [..._allReviews];
+    
+    if (_userReviews.isNotEmpty) {
+      combinedList.insertAll(0, _userReviews);
+    }
+    
+    return combinedList;
+  }
+
   Future<void> _createReview() async {
     showDialog(
       context: context,
@@ -396,7 +455,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
             ),
             TextButton(
               onPressed: () async {
-                // Validar que los campos no estén vacíos
                 if (_titleController.text.isEmpty || _bodyController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -408,7 +466,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                 }
 
                 try {
-                  // Guardar los datos antes de limpiar los campos
                   final reviewTitle = _titleController.text;
                   final reviewBody = _bodyController.text;
                   
@@ -421,35 +478,30 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                       'title': reviewTitle,
                       'body': reviewBody,
                       'is_positive': _isPositive,
-                      'user_id': 1, // Valor por defecto
-                      'movie_id': widget.series.id.toString(), // Convertir a string para asegurar compatibilidad
+                      'user_id': 1,
+                      'movie_id': widget.series.id.toString(),
                     }),
                   );
 
                   if (response.statusCode == 200 || response.statusCode == 201) {
-                    // Limpiar los campos
                     _titleController.clear();
                     _bodyController.clear();
                     
-                    // Cerrar el diálogo
                     Navigator.of(context).pop();
                     
-                    // Añadir la nueva review a la lista existente
-                    final responseData = json.decode(response.body);
-                    
-                    // Crear una nueva review con los datos guardados
                     final newReview = Review(
-                      author: "Tú", // O puedes usar un nombre de usuario almacenado
-                      content: reviewTitle + ": " + reviewBody, // Combinar título y cuerpo para mostrar en la review
+                      author: "Tú",
+                      content: reviewTitle + ": " + reviewBody,
                       avatarPath: null,
-                      rating: _isPositive ? 10.0 : 3.0, // Asignar una calificación basada en si es positiva o no
+                      rating: _isPositive ? 10.0 : 3.0,
                       createdAt: DateTime.now().toIso8601String(),
                     );
                     
+                    await _saveReview(newReview);
+                    
                     setState(() {
-                      _allReviews.insert(0, newReview); // Insertar al principio de la lista
+                      _userReviews.insert(0, newReview);
                       
-                      // Actualizar las reviews en series details
                       if (_seriesDetails != null) {
                         _seriesDetails = SeriesDetails(
                           overview: _seriesDetails!.overview,
@@ -464,12 +516,11 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                           numberOfSeasons: _seriesDetails!.numberOfSeasons,
                           firstAirDate: _seriesDetails!.firstAirDate,
                           lastAirDate: _seriesDetails!.lastAirDate,
-                          reviews: _allReviews,
+                          reviews: _combinedReviews,
                         );
                       }
                     });
                     
-                    // Mostrar un mensaje de éxito
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Review creada con éxito'),
@@ -514,7 +565,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
         elevation: 0,
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
         actions: [
-          // Botón para crear una review
           IconButton(
             icon: Icon(Icons.rate_review),
             tooltip: 'Crear Review',
@@ -561,7 +611,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Poster a la izquierda
                           Container(
                             width: 300,
                             decoration: BoxDecoration(
@@ -591,12 +640,10 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                             ),
                           ),
                           SizedBox(width: 24),
-                          // Información a la derecha
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Título y rating
                                 Row(
                                   children: [
                                     Expanded(
@@ -644,7 +691,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                   ),
                                 ],
                                 SizedBox(height: 16),
-                                // Información básica
                                 Wrap(
                                   spacing: 8,
                                   runSpacing: 8,
@@ -677,7 +723,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                   ],
                                 ),
                                 SizedBox(height: 24),
-                                // Géneros
                                 Text(
                                   'Géneros',
                                   style: TextStyle(
@@ -698,7 +743,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                       .toList(),
                                 ),
                                 SizedBox(height: 24),
-                                // Sinopsis
                                 Text(
                                   'Sinopsis',
                                   style: TextStyle(
@@ -716,7 +760,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                   ),
                                 ),
                                 SizedBox(height: 24),
-                                // Creadores
                                 Text(
                                   'Creadores',
                                   style: TextStyle(
@@ -739,7 +782,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                           ),
                                         )),
                                 SizedBox(height: 24),
-                                // Reparto principal
                                 Text(
                                   'Reparto Principal',
                                   style: TextStyle(
@@ -799,7 +841,6 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                   ),
                                 ),
                                 SizedBox(height: 24),
-                                // Temporadas
                                 Text(
                                   'Temporadas',
                                   style: TextStyle(
@@ -890,7 +931,7 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                       ),
                                     )),
                                 SizedBox(height: 32),
-                                if (_seriesDetails!.reviews.isNotEmpty) ...[
+                                if (_combinedReviews.isNotEmpty) ...[
                                   SizedBox(height: 24),
                                   Text(
                                     'Mejores Reseñas',
@@ -905,7 +946,7 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        'Total: ${_allReviews.length} reseñas',
+                                        'Total: ${_combinedReviews.length} reseñas',
                                         style: TextStyle(
                                           color: isDark ? Colors.white70 : Colors.black54,
                                           fontSize: 14,
@@ -926,7 +967,7 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                                     ],
                                   ),
                                   SizedBox(height: 16),
-                                  ...(_seriesDetails!.reviews.map((review) => Container(
+                                  ...(_combinedReviews.map((review) => Container(
                                         margin: EdgeInsets.only(bottom: 16),
                                         padding: EdgeInsets.all(16),
                                         decoration: BoxDecoration(

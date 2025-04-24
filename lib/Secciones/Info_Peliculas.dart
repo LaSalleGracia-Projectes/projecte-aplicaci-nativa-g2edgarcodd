@@ -304,6 +304,28 @@ class _InfoPeliculasViewState extends State<InfoPeliculasView> {
     return combinedList;
   }
 
+  Future<String> _getUsername() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://25.17.74.119:8000/api/getUser'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['success'] == true && responseData['data'] != null) {
+          return responseData['data']['username'] ?? 'Usuario';
+        }
+      }
+      return 'Usuario';
+    } catch (e) {
+      print('Error obteniendo nombre de usuario: $e');
+      return 'Usuario';
+    }
+  }
+
   Future<void> _createReview() async {
     showDialog(
       context: context,
@@ -403,14 +425,18 @@ class _InfoPeliculasViewState extends State<InfoPeliculasView> {
                 }
 
                 try {
+                  final reviewTitle = _titleController.text;
+                  final reviewBody = _bodyController.text;
+                  final username = await _getUsername();
+                  
                   final response = await http.post(
                     Uri.parse('http://25.17.74.119:8000/api/createReview'),
                     headers: {
                       'Content-Type': 'application/json',
                     },
                     body: json.encode({
-                      'title': _titleController.text,
-                      'body': _bodyController.text,
+                      'title': reviewTitle,
+                      'body': reviewBody,
                       'is_positive': _isPositive,
                       'user_id': 1,
                       'movie_id': widget.movie.id.toString(),
@@ -418,18 +444,12 @@ class _InfoPeliculasViewState extends State<InfoPeliculasView> {
                   );
 
                   if (response.statusCode == 200 || response.statusCode == 201) {
-                    final reviewTitle = _titleController.text;
-                    final reviewBody = _bodyController.text;
-                    
                     _titleController.clear();
                     _bodyController.clear();
-                    
                     Navigator.of(context).pop();
                     
-                    final responseData = json.decode(response.body);
-                    
                     final newReview = Review(
-                      author: "Tú",
+                      author: username,
                       content: reviewTitle + ": " + reviewBody,
                       avatarPath: null,
                       rating: _isPositive ? 10.0 : 3.0,

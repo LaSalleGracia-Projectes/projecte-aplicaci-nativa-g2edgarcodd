@@ -367,6 +367,28 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
     return combinedList;
   }
 
+  Future<String> _getUsername() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://25.17.74.119:8000/api/getUser'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['success'] == true && responseData['data'] != null) {
+          return responseData['data']['username'] ?? 'Usuario';
+        }
+      }
+      return 'Usuario';
+    } catch (e) {
+      print('Error obteniendo nombre de usuario: $e');
+      return 'Usuario';
+    }
+  }
+
   Future<void> _createReview() async {
     showDialog(
       context: context,
@@ -468,6 +490,7 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                 try {
                   final reviewTitle = _titleController.text;
                   final reviewBody = _bodyController.text;
+                  final username = await _getUsername();
                   
                   final response = await http.post(
                     Uri.parse('http://25.17.74.119:8000/api/createReview'),
@@ -486,11 +509,10 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                   if (response.statusCode == 200 || response.statusCode == 201) {
                     _titleController.clear();
                     _bodyController.clear();
-                    
                     Navigator.of(context).pop();
                     
                     final newReview = Review(
-                      author: "Tú",
+                      author: username,
                       content: reviewTitle + ": " + reviewBody,
                       avatarPath: null,
                       rating: _isPositive ? 10.0 : 3.0,

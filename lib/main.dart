@@ -41,13 +41,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeProvider.currentTheme,
-      locale: Locale(languageProvider.currentLanguage),
-      supportedLocales: [
+      locale: const Locale('es'),
+      supportedLocales: const [
         Locale('es'),
         Locale('en'),
         Locale('ca'),
       ],
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

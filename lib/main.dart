@@ -86,7 +86,7 @@ class PaginaInicio extends StatelessWidget {
               buildButton(context, l10n.noRegistration, Colors.orange, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Menu()),
+                  MaterialPageRoute(builder: (context) => Menu(isGuest: true)),
                 );
               }),
               buildButton(context, l10n.register, Colors.orange, () {

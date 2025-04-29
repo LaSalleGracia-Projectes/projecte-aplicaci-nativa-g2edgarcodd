@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'Menu_Usuario/Perfil.dart';
 import 'Menu_Usuario/Configuracion.dart';
+import 'Registro/login.dart';
+import 'Registro/registro.dart';
 import 'main.dart';
 import 'dart:async';
 import 'Header/Contacto.dart';
@@ -164,7 +166,8 @@ class TMDBService {
 }
 
 class Menu extends StatefulWidget {
-  const Menu({super.key});
+  final bool isGuest;
+  const Menu({super.key, this.isGuest = false});
 
   @override
   _MenuState createState() => _MenuState();
@@ -419,27 +422,83 @@ class _MenuState extends State<Menu> {
               ListTile(
                 leading: Icon(Icons.person, color: isDark ? Colors.white : Colors.black87),
                 title: Text(l10n.profile, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
-                onTap: () async {
-                  try {
-                    final token = "11|Gt4FFtLcWsOY61ImE3Bbd6J9IMF2TFtHPDOjKLVtea3cbeca";
-                    print('Navegando a perfil con token: $token');
-                    
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PerfilScreen(
-                          token: token,
+                onTap: () {
+                  if (widget.isGuest) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          title: Row(
+                            children: [
+                              Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 22),
+                              SizedBox(width: 8),
+                              Text("Registro/Login Necesario",
+                                  style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16)),
+                            ],
+                          ),
+                          content: Text(
+                            "Para acceder a esta función necesitas registrarte o iniciar sesión.",
+                            style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 14),
+                          ),
+                          actions: [
+                            TextButton(
+                              child: Text("Registrarse",
+                                  style: TextStyle(color: Colors.blue, fontSize: 14)),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => RegistroScreen()),
+                                );
+                              },
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text("Iniciar Sesión",
+                                  style: TextStyle(color: Colors.white, fontSize: 14)),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => LoginScreen(correo: '', password: '')),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    try {
+                      final token = "11|Gt4FFtLcWsOY61ImE3Bbd6J9IMF2TFtHPDOjKLVtea3cbeca";
+                      print('Navegando a perfil con token: $token');
+                      
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PerfilScreen(
+                            token: token,
+                          ),
                         ),
-                      ),
-                    );
-                  } catch (e) {
-                    print('Error al navegar al perfil: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error al cargar el perfil: $e'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                      );
+                    } catch (e) {
+                      print('Error al navegar al perfil: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error al cargar el perfil: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   }
                 },
               ),

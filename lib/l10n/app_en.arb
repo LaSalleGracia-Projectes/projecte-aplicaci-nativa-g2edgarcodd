@@ -45,5 +45,20 @@
   "noDate": "No date",
   "movie": "MOVIE",
   "noTitle": "No title",
-  "since": "Since"
+  "since": "Since",
+  "blogDescription": "Discover the latest trends, analysis and news about the world of streaming, cinema and television",
+  "searchBlog": "Search in the blog...",
+  "selectFilters": "Select Filters",
+  "all": "All",
+  "subscribeNewsletter": "Subscribe to Our Newsletter",
+  "newsletterDescription": "Receive the latest news about Streaming and content directly to your email.",
+  "yourEmail": "Your email address",
+  "thanksForSubscribing": "Thanks for subscribing!",
+  "subscribe": "Subscribe",
+  "errorLoadingNews": "Error loading news",
+  "loadMoreNews": "Load more news",
+  "recentComments": "Recent Comments",
+  "hideComments": "Hide Comments",
+  "viewAllComments": "View All Comments",
+  "daysAgo": "{days, plural, =0{Today} =1{1 day ago} other{{days} days ago}}"
 } 

@@ -4,6 +4,7 @@ import '../theme_provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewsArticle {
   final String title;
@@ -289,10 +290,11 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
     final screenSize = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Blog', style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
+        title: Text(l10n.blog, style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
         backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
@@ -342,7 +344,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'StreamHub Blog',
+                              'StreamHub ${l10n.blog}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 48,
@@ -360,7 +362,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                             Container(
                               width: screenSize.width * 0.6,
                               child: Text(
-                                'Descubre las últimas tendencias, análisis y noticias sobre el mundo del streaming, cine y televisión',
+                                l10n.blogDescription,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,
@@ -398,7 +400,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                           controller: _searchController,
                           style: TextStyle(color: isDark ? Colors.white : Colors.black),
                           decoration: InputDecoration(
-                            hintText: 'Buscar en el blog...',
+                            hintText: l10n.searchBlog,
                             hintStyle: TextStyle(color: isDark ? Colors.white60 : Colors.black54),
                             prefixIcon: Icon(Icons.search, color: isDark ? Colors.white60 : Colors.black54),
                             filled: true,
@@ -445,7 +447,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Categorías',
+                                      l10n.categories,
                                       style: TextStyle(
                                         color: isDark ? Colors.white : Colors.black,
                                         fontSize: 24,
@@ -454,17 +456,17 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                     ),
                                     SizedBox(height: 20),
                                     Text(
-                                      'Seleccionar Filtros',
+                                      l10n.selectFilters,
                                       style: TextStyle(
                                         color: isDark ? Colors.white70 : Colors.black54,
                                         fontSize: 16,
                                       ),
                                     ),
                                     SizedBox(height: 15),
-                                    _buildCategoryButton('Todas', Icons.all_inclusive),
-                                    _buildCategoryButton('Películas', Icons.play_circle_outline),
-                                    _buildCategoryButton('Series', Icons.devices),
-                                    _buildCategoryButton('Reviews', Icons.message),
+                                    _buildCategoryButton(l10n.all, Icons.all_inclusive),
+                                    _buildCategoryButton(l10n.movies, Icons.play_circle_outline),
+                                    _buildCategoryButton(l10n.series, Icons.devices),
+                                    _buildCategoryButton(l10n.reviews, Icons.message),
                                   ],
                                 ),
                               ),
@@ -484,7 +486,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Suscríbete a Nuestra Newsletter',
+                                      l10n.subscribeNewsletter,
                                       style: TextStyle(
                                         color: isDark ? Colors.white : Colors.black,
                                         fontSize: 20,
@@ -493,7 +495,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                     ),
                                     SizedBox(height: 15),
                                     Text(
-                                      'Recibe las últimas novedades sobre Streaming y contenidos directamente a tu email.',
+                                      l10n.newsletterDescription,
                                       style: TextStyle(
                                         color: isDark ? Colors.white70 : Colors.black54,
                                         fontSize: 14,
@@ -505,7 +507,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                       controller: _emailController,
                                       style: TextStyle(color: isDark ? Colors.white : Colors.black),
                                       decoration: InputDecoration(
-                                        hintText: 'Tu correo electrónico',
+                                        hintText: l10n.yourEmail,
                                         hintStyle: TextStyle(color: isDark ? Colors.white60 : Colors.black38),
                                         filled: true,
                                         fillColor: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
@@ -535,7 +537,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                           if (_emailController.text.isNotEmpty) {
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
-                                                content: Text('¡Gracias por suscribirte!'),
+                                                content: Text(l10n.thanksForSubscribing),
                                                 backgroundColor: Colors.green,
                                               ),
                                             );
@@ -550,7 +552,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                           ),
                                         ),
                                         child: Text(
-                                          'Suscribirse',
+                                          l10n.subscribe,
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -584,7 +586,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                       Icon(Icons.error_outline, color: Colors.red, size: 48),
                                       SizedBox(height: 16),
                                       Text(
-                                        'Error al cargar las noticias',
+                                        l10n.errorLoadingNews,
                                         style: TextStyle(
                                           color: isDark ? Colors.white70 : Colors.black54,
                                           fontSize: 16,
@@ -593,7 +595,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                       SizedBox(height: 16),
                                       ElevatedButton(
                                         onPressed: _loadNews,
-                                        child: Text('Reintentar'),
+                                        child: Text(l10n.retry),
                                       ),
                                     ],
                                   ),
@@ -607,7 +609,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                           entry.value.imageUrl != null
                                               ? 'https://image.tmdb.org/t/p/w500${entry.value.imageUrl}'
                                               : 'images/movie_poster.png',
-                                          entry.value.type == 'movie' ? 'Película' : 'Serie',
+                                          entry.value.type == 'movie' ? l10n.movie : l10n.series,
                                           entry.value.publishedAt,
                                           entry.key,
                                           entry.value.reviews,
@@ -632,7 +634,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                                                     Icon(Icons.add, color: Colors.white),
                                                     SizedBox(width: 8),
                                                     Text(
-                                                      'Cargar más noticias',
+                                                      l10n.loadMoreNews,
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 16,
@@ -713,6 +715,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
   Widget _buildNewsCard(String title, String description, String imageUrl, String type, String date, int index, List<Review> reviews) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     // Lista de nombres de usuarios ficticios para el blog
     final List<String> usernames = [
@@ -948,6 +951,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
   Widget _buildReviewsSection() {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: EdgeInsets.only(top: 40),
@@ -958,7 +962,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Comentarios Recientes',
+                l10n.recentComments,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 24,
@@ -972,7 +976,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                   });
                 },
                 child: Text(
-                  _showReviews ? 'Ocultar Comentarios' : 'Ver Todos los Comentarios',
+                  _showReviews ? l10n.hideComments : l10n.viewAllComments,
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 16,
@@ -1070,7 +1074,7 @@ class _BlogState extends State<Blog> with SingleTickerProviderStateMixin {
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: Text(
-                                  'Hace ${DateTime.now().difference(DateTime.parse(review.createdAt)).inDays} días',
+                                  l10n.daysAgo(DateTime.now().difference(DateTime.parse(review.createdAt)).inDays),
                                   style: TextStyle(
                                     color: isDark ? Colors.white38 : Colors.black38,
                                     fontSize: 11,

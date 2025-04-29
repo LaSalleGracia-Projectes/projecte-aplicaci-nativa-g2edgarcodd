@@ -45,5 +45,20 @@
   "noDate": "Sense data",
   "movie": "PEL·LÍCULA",
   "noTitle": "Sense títol",
-  "since": "Des de"
+  "since": "Des de",
+  "blogDescription": "Descobreix les últimes tendències, anàlisis i notícies sobre el món del streaming, cinema i televisió",
+  "searchBlog": "Cercar al blog...",
+  "selectFilters": "Seleccionar Filtres",
+  "all": "Totes",
+  "subscribeNewsletter": "Subscriu-te a la Nostra Newsletter",
+  "newsletterDescription": "Rep les últimes novetats sobre Streaming i continguts directament al teu correu electrònic.",
+  "yourEmail": "El teu correu electrònic",
+  "thanksForSubscribing": "Gràcies per subscriure't!",
+  "subscribe": "Subscriure's",
+  "errorLoadingNews": "Error en carregar les notícies",
+  "loadMoreNews": "Carregar més notícies",
+  "recentComments": "Comentaris Recents",
+  "hideComments": "Amagar Comentaris",
+  "viewAllComments": "Veure Tots els Comentaris",
+  "daysAgo": "{days, plural, =0{Avui} =1{Fa 1 dia} other{Fa {days} dies}}"
 } 

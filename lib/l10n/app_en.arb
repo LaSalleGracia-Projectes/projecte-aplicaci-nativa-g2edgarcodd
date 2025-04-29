@@ -29,5 +29,21 @@
   "seeAll": "See All",
   "newReleases": "New Releases",
   "navigation": "Navigation",
-  "categories": "Categories"
+  "categories": "Categories",
+  "streamHubExplore": "StreamHub Explore",
+  "discoverContent": "Discover the best movies, series and exclusive content on our platform",
+  "errorLoadingMovies": "Could not load movies",
+  "noMoviesAvailable": "No movies available",
+  "errorLoadingSeries": "Could not load series",
+  "noSeriesAvailable": "No series available",
+  "reviews": "Reviews",
+  "user": "User",
+  "thisMovie": "this movie",
+  "reviewComment": "I loved {movieTitle}. I highly recommend it...",
+  "loading": "Loading...",
+  "retry": "Retry",
+  "noDate": "No date",
+  "movie": "MOVIE",
+  "noTitle": "No title",
+  "since": "Since"
 } 

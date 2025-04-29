@@ -7,6 +7,7 @@ import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/peliculas.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/series.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/Info_Peliculas.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/Info_Series.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Explorar extends StatefulWidget {
   const Explorar({super.key});
@@ -104,10 +105,11 @@ class _ExplorarState extends State<Explorar> {
     final screenSize = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
-        title: Text('Explorar', style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
+        title: Text(l10n.explore, style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
         backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
@@ -157,7 +159,7 @@ class _ExplorarState extends State<Explorar> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'StreamHub Explorar',
+                              l10n.streamHubExplore,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: screenSize.width < 600 ? 32 : 48,
@@ -176,7 +178,7 @@ class _ExplorarState extends State<Explorar> {
                             Container(
                               width: screenSize.width * (screenSize.width < 600 ? 0.8 : 0.6),
                               child: Text(
-                                'Descubre las mejores películas, series y contenido exclusivo en nuestra plataforma',
+                                l10n.discoverContent,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.white,
@@ -206,16 +208,16 @@ class _ExplorarState extends State<Explorar> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSectionTitle('Películas'),
+                    _buildSectionTitle(l10n.movies),
                     SizedBox(height: 20),
                     Container(
                       height: 300,
                       child: _isLoadingMovies
                           ? _buildLoadingIndicator()
                           : _hasErrorMovies
-                              ? _buildErrorMessage('No se pudieron cargar las películas')
+                              ? _buildErrorMessage(l10n.errorLoadingMovies)
                               : _moviesList.isEmpty
-                                  ? _buildEmptyMessage('No hay películas disponibles')
+                                  ? _buildEmptyMessage(l10n.noMoviesAvailable)
                                   : SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       padding: EdgeInsets.only(right: 20),
@@ -230,16 +232,16 @@ class _ExplorarState extends State<Explorar> {
                     SizedBox(height: 40),
 
                     // Sección de Series
-                    _buildSectionTitle('Series'),
+                    _buildSectionTitle(l10n.series),
                     SizedBox(height: 20),
                     Container(
                       height: 300,
                       child: _isLoadingSeries
                           ? _buildLoadingIndicator()
                           : _hasErrorSeries
-                              ? _buildErrorMessage('No se pudieron cargar las series')
+                              ? _buildErrorMessage(l10n.errorLoadingSeries)
                               : _seriesList.isEmpty
-                                  ? _buildEmptyMessage('No hay series disponibles')
+                                  ? _buildEmptyMessage(l10n.noSeriesAvailable)
                                   : SingleChildScrollView(
                                       scrollDirection: Axis.horizontal,
                                       padding: EdgeInsets.only(right: 20),
@@ -254,7 +256,7 @@ class _ExplorarState extends State<Explorar> {
                     SizedBox(height: 40),
 
                     // Sección de Comentarios
-                    _buildSectionTitle('Reviews'),
+                    _buildSectionTitle(l10n.reviews),
                     SizedBox(height: 20),
                     Container(
                       height: 200,
@@ -268,16 +270,16 @@ class _ExplorarState extends State<Explorar> {
                                   ...List.generate(
                                     _moviesList.length > 0 ? 5 : 0,
                                     (index) {
-                                      String username = "Usuario ${index + 1}";
+                                      String username = "${l10n.user} ${index + 1}";
                                       String movieTitle = '';
                                       if (index < _moviesList.length) {
-                                        movieTitle = _moviesList[index].title ?? 'esta película';
+                                        movieTitle = _moviesList[index].title ?? l10n.thisMovie;
                                       } else {
                                         int randomIndex = index % _moviesList.length;
-                                        movieTitle = _moviesList[randomIndex].title ?? 'esta película';
+                                        movieTitle = _moviesList[randomIndex].title ?? l10n.thisMovie;
                                       }
                                       
-                                      String comment = "Me encantó $movieTitle. La recomiendo mucho...";
+                                      String comment = l10n.reviewComment(movieTitle);
                                       int rating = 3 + (index % 3);
                                       
                                       return _buildCommentCard(
@@ -304,6 +306,7 @@ class _ExplorarState extends State<Explorar> {
   }
 
   Widget _buildLoadingIndicator() {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -311,7 +314,7 @@ class _ExplorarState extends State<Explorar> {
           CircularProgressIndicator(),
           SizedBox(height: 16),
           Text(
-            'Cargando...',
+            l10n.loading,
             style: TextStyle(
               color: Provider.of<ThemeProvider>(context).isDarkMode ? Colors.white70 : Colors.black54,
             ),
@@ -323,6 +326,7 @@ class _ExplorarState extends State<Explorar> {
 
   Widget _buildErrorMessage(String message) {
     final isDark = Provider.of<ThemeProvider>(context).isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -351,7 +355,7 @@ class _ExplorarState extends State<Explorar> {
               });
               _loadData();
             },
-            child: Text('Reintentar'),
+            child: Text(l10n.retry),
           ),
         ],
       ),
@@ -385,6 +389,7 @@ class _ExplorarState extends State<Explorar> {
   Widget _buildSectionTitle(String title) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -399,12 +404,12 @@ class _ExplorarState extends State<Explorar> {
         ),
         TextButton(
           onPressed: () {
-            if (title == 'Películas') {
+            if (title == l10n.movies) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => PeliculasView()),
               );
-            } else if (title == 'Series') {
+            } else if (title == l10n.series) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SeriesView()),
@@ -412,7 +417,7 @@ class _ExplorarState extends State<Explorar> {
             }
           },
           child: Text(
-            'Ver más',
+            l10n.seeMore,
             style: TextStyle(
               color: isDark ? Colors.blue[300] : Colors.blue,
               fontSize: 16,
@@ -642,12 +647,13 @@ class _ExplorarState extends State<Explorar> {
   Widget _buildMovieCardFromAPI(MediaItem movie) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     String imageUrl = TMDBService.getImageUrl(movie.posterPath ?? '');
     String rating = (movie.voteAverage ?? 0.0).toStringAsFixed(1);
     String year = (movie.releaseDate != null && movie.releaseDate!.isNotEmpty && movie.releaseDate!.length >= 4)
         ? movie.releaseDate!.substring(0, 4)
-        : "Sin fecha";
+        : l10n.noDate;
     
     return GestureDetector(
       onTap: () {
@@ -750,7 +756,7 @@ class _ExplorarState extends State<Explorar> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
-                        'PELÍCULA',
+                        l10n.movie,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -792,7 +798,7 @@ class _ExplorarState extends State<Explorar> {
             Container(
               width: 200,
               child: Text(
-                movie.title ?? 'Sin título',
+                movie.title ?? l10n.noTitle,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 14,
@@ -811,11 +817,12 @@ class _ExplorarState extends State<Explorar> {
   Widget _buildSeriesCardFromAPI(MediaItem serie) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     String imageUrl = TMDBService.getImageUrl(serie.posterPath ?? '');
     String year = (serie.releaseDate != null && serie.releaseDate!.isNotEmpty && serie.releaseDate!.length >= 4)
         ? serie.releaseDate!.substring(0, 4)
-        : "Sin fecha";
+        : l10n.noDate;
     
     return GestureDetector(
       onTap: () {
@@ -895,7 +902,7 @@ class _ExplorarState extends State<Explorar> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
-                        'SERIE',
+                        l10n.series,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -948,7 +955,7 @@ class _ExplorarState extends State<Explorar> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Desde $year",
+                            "${l10n.since} $year",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 12,
@@ -980,7 +987,7 @@ class _ExplorarState extends State<Explorar> {
             Container(
               width: 200,
               child: Text(
-                serie.title ?? 'Sin título',
+                serie.title ?? l10n.noTitle,
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 14,

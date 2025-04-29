@@ -29,5 +29,21 @@
   "seeAll": "Ver todo",
   "newReleases": "Nuevos lanzamientos",
   "navigation": "Navegación",
-  "categories": "Categorías"
+  "categories": "Categorías",
+  "streamHubExplore": "StreamHub Explorar",
+  "discoverContent": "Descubre las mejores películas, series y contenido exclusivo en nuestra plataforma",
+  "errorLoadingMovies": "No se pudieron cargar las películas",
+  "noMoviesAvailable": "No hay películas disponibles",
+  "errorLoadingSeries": "No se pudieron cargar las series",
+  "noSeriesAvailable": "No hay series disponibles",
+  "reviews": "Reseñas",
+  "user": "Usuario",
+  "thisMovie": "esta película",
+  "reviewComment": "Me encantó {movieTitle}. La recomiendo mucho...",
+  "loading": "Cargando...",
+  "retry": "Reintentar",
+  "noDate": "Sin fecha",
+  "movie": "PELÍCULA",
+  "noTitle": "Sin título",
+  "since": "Desde"
 } 

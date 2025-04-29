@@ -29,5 +29,21 @@
   "seeAll": "Veure tot",
   "newReleases": "Nous llançaments",
   "navigation": "Navegació",
-  "categories": "Categories"
+  "categories": "Categories",
+  "streamHubExplore": "StreamHub Explorar",
+  "discoverContent": "Descobreix les millors pel·lícules, sèries i contingut exclusiu a la nostra plataforma",
+  "errorLoadingMovies": "No s'han pogut carregar les pel·lícules",
+  "noMoviesAvailable": "No hi ha pel·lícules disponibles",
+  "errorLoadingSeries": "No s'han pogut carregar les sèries",
+  "noSeriesAvailable": "No hi ha sèries disponibles",
+  "reviews": "Ressenyes",
+  "user": "Usuari",
+  "thisMovie": "aquesta pel·lícula",
+  "reviewComment": "M'ha encantat {movieTitle}. La recomano molt...",
+  "loading": "Carregant...",
+  "retry": "Tornar a intentar",
+  "noDate": "Sense data",
+  "movie": "PEL·LÍCULA",
+  "noTitle": "Sense títol",
+  "since": "Des de"
 } 

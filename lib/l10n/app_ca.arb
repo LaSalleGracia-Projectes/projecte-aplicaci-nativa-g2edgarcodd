@@ -18,5 +18,16 @@
   "seeMore": "Veure Més",
   "genres": "Gèneres",
   "search": "Cercar",
-  "noResults": "No s'han trobat resultats"
+  "noResults": "No s'han trobat resultats",
+  "home": "Inici",
+  "explore": "Explorar",
+  "blog": "Blog",
+  "contact": "Contacte",
+  "userMenu": "Menú d'usuari",
+  "profile": "Perfil",
+  "continueWatching": "Continuar veient",
+  "seeAll": "Veure tot",
+  "newReleases": "Nous llançaments",
+  "navigation": "Navegació",
+  "categories": "Categories"
 } 

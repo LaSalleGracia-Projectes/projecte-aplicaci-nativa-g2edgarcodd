@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../main_view.dart';
 import '../theme_provider.dart';
 import '../language_provider.dart';
 import '../main.dart';
@@ -207,7 +208,8 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                                 underline: Container(),
                                 onChanged: (String? newValue) {
                                   if (newValue != null) {
-                                    languageProvider.changeLanguage(languageProvider.getLanguageCode(newValue));
+                                    final newLanguageCode = languageProvider.getLanguageCode(newValue);
+                                    languageProvider.changeLanguage(newLanguageCode);
                                     _mostrarMensaje(
                                       'Idioma cambiado a $newValue',
                                       Colors.blue,

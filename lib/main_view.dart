@@ -15,6 +15,7 @@ import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/peliculas.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/series.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Clase para almacenar datos de películas/series de TMDB
 class MediaItem {
@@ -307,6 +308,7 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
@@ -324,7 +326,7 @@ class _MenuState extends State<Menu> {
                   TextButton(
                     onPressed: () {},
                     child: Text(
-                      'Inicio',
+                      l10n.home,
                       style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 16),
                     ),
                   ),
@@ -336,7 +338,7 @@ class _MenuState extends State<Menu> {
                       );
                     },
                     child: Text(
-                      'Explorar',
+                      l10n.explore,
                       style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 16),
                     ),
                   ),
@@ -348,7 +350,7 @@ class _MenuState extends State<Menu> {
                       );
                     },
                     child: Text(
-                      'Blog',
+                      l10n.blog,
                       style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 16),
                     ),
                   ),
@@ -360,7 +362,7 @@ class _MenuState extends State<Menu> {
                       );
                     },
                     child: Text(
-                      'Contacto',
+                      l10n.contact,
                       style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 16),
                     ),
                   ),
@@ -377,7 +379,7 @@ class _MenuState extends State<Menu> {
                     child: TextField(
                       style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black),
                       decoration: InputDecoration(
-                        hintText: 'Buscar...',
+                        hintText: l10n.search,
                         hintStyle: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -410,16 +412,16 @@ class _MenuState extends State<Menu> {
               DrawerHeader(
                 decoration: BoxDecoration(color: isDark ? Color(0xFF060D17) : Colors.blue.shade100),
                 child: Text(
-                  'Menú de usuario',
+                  l10n.userMenu,
                   style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black),
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.person, color: isDark ? Colors.white : Colors.black87),
-                title: Text('Perfil', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+                title: Text(l10n.profile, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
                 onTap: () async {
                   try {
-                    final token = "11|Gt4FFtLcWsOY61ImE3Bbd6J9IMF2TFtHPDOjKLVtea3cbeca"; // Token de prueba
+                    final token = "11|Gt4FFtLcWsOY61ImE3Bbd6J9IMF2TFtHPDOjKLVtea3cbeca";
                     print('Navegando a perfil con token: $token');
                     
                     Navigator.push(
@@ -443,7 +445,7 @@ class _MenuState extends State<Menu> {
               ),
               ListTile(
                 leading: Icon(Icons.settings, color: isDark ? Colors.white : Colors.black87),
-                title: Text('Configuración', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+                title: Text(l10n.settings, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -453,7 +455,7 @@ class _MenuState extends State<Menu> {
               ),
               ListTile(
                 leading: Icon(Icons.exit_to_app, color: isDark ? Colors.white : Colors.black87),
-                title: Text('Cerrar sesión', style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+                title: Text(l10n.logout, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
                 onTap: () {
                   Navigator.pushAndRemoveUntil(
                     context,
@@ -584,7 +586,7 @@ class _MenuState extends State<Menu> {
                         Row(
                           children: [
                             Text(
-                              "Continuar viendo",
+                              l10n.continueWatching,
                               style: TextStyle(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 22,
@@ -602,7 +604,7 @@ class _MenuState extends State<Menu> {
                         TextButton(
                           onPressed: () {},
                           child: Text(
-                            "Ver todo",
+                            l10n.seeAll,
                             style: TextStyle(
                               color: Colors.blue,
                               fontSize: 14,
@@ -654,7 +656,7 @@ class _MenuState extends State<Menu> {
                     Row(
                       children: [
                         Text(
-                          "Nuevos lanzamientos",
+                          l10n.newReleases,
                           style: TextStyle(
                             color: isDark ? Colors.white : Colors.black,
                             fontSize: 22,
@@ -779,7 +781,7 @@ class _MenuState extends State<Menu> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Navegación',
+                                l10n.navigation,
                                 style: TextStyle(
                                   color: Color(0xFFFFD700),
                                   fontSize: 16,
@@ -830,7 +832,7 @@ class _MenuState extends State<Menu> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Categorías',
+                                l10n.categories,
                                 style: TextStyle(
                                   color: Color(0xFFFFD700),
                                   fontSize: 16,
@@ -869,7 +871,7 @@ class _MenuState extends State<Menu> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Contacto',
+                                l10n.contact,
                                 style: TextStyle(
                                   color: Color(0xFFFFD700),
                                   fontSize: 16,
@@ -1076,6 +1078,7 @@ class _MenuState extends State<Menu> {
   Widget _buildContinueWatchingItemFromAPI(MediaItem item, String timeLeft) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     // Determinar la URL de la imagen del poster
     String imageUrl = TMDBService.getImageUrl(item.posterPath);
@@ -1223,6 +1226,7 @@ class _MenuState extends State<Menu> {
   Widget _buildNewReleaseItemFromAPI(MediaItem item, String badge) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     // Determinar la URL de la imagen del poster
     String imageUrl = TMDBService.getImageUrl(item.posterPath);
@@ -1394,6 +1398,7 @@ class _MenuState extends State<Menu> {
   Widget _buildFilterButton(String label, bool isSelected) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),

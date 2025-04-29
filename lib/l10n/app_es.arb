@@ -18,5 +18,16 @@
   "seeMore": "Ver Más",
   "genres": "Géneros",
   "search": "Buscar",
-  "noResults": "No se han encontrado resultados"
+  "noResults": "No se han encontrado resultados",
+  "home": "Inicio",
+  "explore": "Explorar",
+  "blog": "Blog",
+  "contact": "Contacto",
+  "userMenu": "Menú de usuario",
+  "profile": "Perfil",
+  "continueWatching": "Continuar viendo",
+  "seeAll": "Ver todo",
+  "newReleases": "Nuevos lanzamientos",
+  "navigation": "Navegación",
+  "categories": "Categorías"
 } 

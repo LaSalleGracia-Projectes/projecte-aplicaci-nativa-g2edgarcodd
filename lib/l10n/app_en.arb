@@ -1,7 +1,7 @@
 {
   "appTitle": "StreamHub",
   "welcome": "Welcome to StreamHub",
-  "noRegistration": "Continue without registration",
+  "noRegistration": "Guest",
   "register": "Register",
   "login": "Login",
   "settings": "Settings",

@@ -4,6 +4,7 @@ import 'package:projecte_aplicaci_nativa_g2edgarcodd/Services/tmdb_service.dart'
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Models/media_item.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/theme_provider.dart';
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/Info_Series.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SeriesView extends StatefulWidget {
   const SeriesView({super.key});
@@ -165,10 +166,11 @@ class _SeriesViewState extends State<SeriesView> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
-        title: Text('Series', style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
+        title: Text(l10n.series, style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
         backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
@@ -209,7 +211,7 @@ class _SeriesViewState extends State<SeriesView> {
                         color: isDark ? Colors.white : Colors.black87,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Buscar series...',
+                        hintText: l10n.search,
                         hintStyle: TextStyle(
                           color: isDark ? Colors.white60 : Colors.black45,
                         ),
@@ -252,7 +254,7 @@ class _SeriesViewState extends State<SeriesView> {
                             Icons.filter_list,
                             color: isDark ? Colors.white60 : Colors.black45,
                           ),
-                          tooltip: 'Filtrar por',
+                          tooltip: l10n.selectFilters,
                           onSelected: (String value) {
                             setState(() {
                               _isAscending = !_isAscending;
@@ -266,7 +268,7 @@ class _SeriesViewState extends State<SeriesView> {
                                 children: [
                                   Icon(Icons.calendar_today, size: 20),
                                   SizedBox(width: 8),
-                                  Text('Fecha de Lanzamiento'),
+                                  Text(l10n.newReleases),
                                 ],
                               ),
                             ),
@@ -276,7 +278,7 @@ class _SeriesViewState extends State<SeriesView> {
                                 children: [
                                   Icon(Icons.star, size: 20),
                                   SizedBox(width: 8),
-                                  Text('Rating'),
+                                  Text(l10n.reviews),
                                 ],
                               ),
                             ),
@@ -286,7 +288,7 @@ class _SeriesViewState extends State<SeriesView> {
                                 children: [
                                   Icon(Icons.sort_by_alpha, size: 20),
                                   SizedBox(width: 8),
-                                  Text('Orden Alfabético'),
+                                  Text(l10n.genres),
                                 ],
                               ),
                             ),
@@ -321,7 +323,7 @@ class _SeriesViewState extends State<SeriesView> {
                               Icon(Icons.error_outline, color: Colors.red, size: 48),
                               SizedBox(height: 16),
                               Text(
-                                'Error al cargar las series',
+                                l10n.errorLoadingSeries,
                                 style: TextStyle(
                                   color: isDark ? Colors.white70 : Colors.black54,
                                   fontSize: 16,
@@ -330,7 +332,7 @@ class _SeriesViewState extends State<SeriesView> {
                               SizedBox(height: 16),
                               ElevatedButton(
                                 onPressed: _loadSeries,
-                                child: Text('Reintentar'),
+                                child: Text(l10n.retry),
                               ),
                             ],
                           ),
@@ -347,7 +349,7 @@ class _SeriesViewState extends State<SeriesView> {
                                   ),
                                   SizedBox(height: 16),
                                   Text(
-                                    'No se encontraron series con "${_searchController.text}"',
+                                    l10n.noResults,
                                     style: TextStyle(
                                       color: isDark ? Colors.white70 : Colors.black54,
                                       fontSize: 16,
@@ -385,12 +387,13 @@ class _SeriesViewState extends State<SeriesView> {
   Widget _buildSeriesCard(MediaItem series) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     String imageUrl = TMDBService.getImageUrl(series.posterPath ?? '');
     String rating = (series.voteAverage ?? 0.0).toStringAsFixed(1);
     String year = (series.releaseDate != null && series.releaseDate!.isNotEmpty && series.releaseDate!.length >= 4)
         ? series.releaseDate!.substring(0, 4)
-        : "Sin fecha";
+        : l10n.noDate;
     
     return GestureDetector(
       onTap: () {
@@ -478,7 +481,7 @@ class _SeriesViewState extends State<SeriesView> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        series.title ?? 'Sin título',
+                        series.title ?? l10n.noTitle,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,

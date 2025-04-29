@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ContactoScreen extends StatefulWidget {
   @override
@@ -56,10 +57,11 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
     final screenSize = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contacto', style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
+        title: Text(l10n.contact, style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
         backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
@@ -139,26 +141,26 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                         children: [
                           _buildTextField(
                             controller: _nombreController,
-                            label: 'Nombre',
+                            label: l10n.user,
                             icon: Icons.person,
                           ),
                           SizedBox(height: 20),
                           _buildTextField(
                             controller: _emailController,
-                            label: 'Correo electrónico',
+                            label: l10n.yourEmail,
                             icon: Icons.email,
                             keyboardType: TextInputType.emailAddress,
                           ),
                           SizedBox(height: 20),
                           _buildTextField(
                             controller: _asuntoController,
-                            label: 'Asunto',
+                            label: l10n.selectFilters,
                             icon: Icons.subject,
                           ),
                           SizedBox(height: 20),
                           _buildTextField(
                             controller: _mensajeController,
-                            label: 'Mensaje',
+                            label: l10n.reviews,
                             icon: Icons.message,
                             maxLines: 5,
                           ),
@@ -167,16 +169,16 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                             children: [
                               Expanded(
                                 child: _buildButton(
-                                  'Cancelar',
+                                  l10n.cancel,
                                   Icons.close,
                                   Colors.red.shade400,
-                                      () => Navigator.pop(context),
+                                  () => Navigator.pop(context),
                                 ),
                               ),
                               SizedBox(width: 15),
                               Expanded(
                                 child: _buildButton(
-                                  'Enviar',
+                                  l10n.subscribe,
                                   Icons.send,
                                   Colors.blue.shade600,
                                   _enviarFormulario,
@@ -207,6 +209,7 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
   }) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
     final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
     
     return TextFormField(
       controller: controller,
@@ -240,10 +243,10 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Este campo es requerido';
+          return l10n.errorLoadingNews;
         }
-        if (label == 'Correo electrónico' && !_isValidEmail(value)) {
-          return 'Ingresa un correo electrónico válido';
+        if (label == l10n.yourEmail && !_isValidEmail(value)) {
+          return l10n.errorLoadingNews;
         }
         return null;
       },

@@ -9,8 +9,12 @@ import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/Info_Peliculas.da
 import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/Info_Series.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../Registro/login.dart';
+import '../Registro/registro.dart';
+
 class Explorar extends StatefulWidget {
-  const Explorar({super.key});
+  final bool isGuest;
+  const Explorar({super.key, this.isGuest = false});
 
   @override
   _ExplorarState createState() => _ExplorarState();
@@ -28,7 +32,73 @@ class _ExplorarState extends State<Explorar> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    if (widget.isGuest) {
+      _showGuestAlert();
+    } else {
+      _loadData();
+    }
+  }
+
+  void _showGuestAlert() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          final themeProvider = Provider.of<ThemeProvider>(context);
+          final isDark = themeProvider.isDarkMode;
+          final l10n = AppLocalizations.of(context)!;
+          
+          return AlertDialog(
+            backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            title: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 22),
+                SizedBox(width: 8),
+                Text("Registro/Login Necesario",
+                    style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16)),
+              ],
+            ),
+            content: Text(
+              "Para acceder a esta función necesitas registrarte o iniciar sesión.",
+              style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 14),
+            ),
+            actions: [
+              TextButton(
+                child: Text("Registrarse",
+                    style: TextStyle(color: Colors.blue, fontSize: 14)),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegistroScreen()),
+                  );
+                },
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text("Iniciar Sesión",
+                    style: TextStyle(color: Colors.white, fontSize: 14)),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen(correo: '', password: '')),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   // Método para cargar datos de la API

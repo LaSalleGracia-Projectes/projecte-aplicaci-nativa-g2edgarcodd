@@ -337,7 +337,7 @@ class _MenuState extends State<Menu> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const Explorar()),
+                        MaterialPageRoute(builder: (context) => Explorar(isGuest: widget.isGuest)),
                       );
                     },
                     child: Text(
@@ -867,7 +867,7 @@ class _MenuState extends State<Menu> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => const Explorar()),
+                                    MaterialPageRoute(builder: (context) => Explorar(isGuest: widget.isGuest)),
                                   );
                                 },
                               ),

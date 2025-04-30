@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeProvider.currentTheme,
-      locale: const Locale('es'),
+      locale: Locale(languageProvider.currentLanguage),
       supportedLocales: const [
         Locale('es'),
         Locale('en'),

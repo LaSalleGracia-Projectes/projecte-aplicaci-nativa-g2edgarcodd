@@ -306,11 +306,15 @@ class _InfoPeliculasViewState extends State<InfoPeliculasView> {
 
   Future<String> _getUsername() async {
     try {
-      final response = await http.get(
+      final response = await http.post(
         Uri.parse('http://25.17.74.119:8000/api/getUser'),
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
+        body: json.encode({
+          'user_id': 1
+        }),
       );
 
       if (response.statusCode == 200) {

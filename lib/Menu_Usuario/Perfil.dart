@@ -36,22 +36,19 @@ class _PerfilScreenState extends State<PerfilScreen> {
       print('Iniciando petición al servidor...');
       print('Token usado: $token');
 
-      // Construir la URL con los parámetros query
-      final queryParameters = {
-        'token': token,
-        'user_id': '13'
-      };
-
-      final response = await http.get(
-        Uri.http('25.17.74.119:8000', '/api/getUser', queryParameters),
+      final response = await http.post(
+        Uri.parse('http://25.17.74.119:8000/api/getUser'),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
+        body: json.encode({
+          'user_id': 1
+        }),
       );
 
-      print('URL de la petición: ${Uri.http('192.168.194.245:8000', '/api/getUser', queryParameters)}');
+      print('URL de la petición: http://25.17.74.119:8000/api/getUser');
       print('Código de estado: ${response.statusCode}');
       print('Cuerpo de la respuesta: ${response.body}');
 

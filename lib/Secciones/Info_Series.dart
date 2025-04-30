@@ -496,10 +496,15 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                   final reviewBody = _bodyController.text;
                   final username = await _getUsername();
                   
+                  // Token de autenticación
+                  String token = "14|AZR75fejNkawmO8bMm87SPdl0Df5t98YSCTlvIrze968f75a";
+                  
                   final response = await http.post(
                     Uri.parse('http://25.17.74.119:8000/api/createReview'),
                     headers: {
                       'Content-Type': 'application/json',
+                      'Accept': 'application/json',
+                      'Authorization': 'Bearer $token',
                     },
                     body: json.encode({
                       'title': reviewTitle,
@@ -509,6 +514,8 @@ class _InfoSeriesViewState extends State<InfoSeriesView> {
                       'movie_id': widget.series.id.toString(),
                     }),
                   );
+
+                  print('Review creation response: ${response.statusCode} - ${response.body}');
 
                   if (response.statusCode == 200 || response.statusCode == 201) {
                     _titleController.clear();

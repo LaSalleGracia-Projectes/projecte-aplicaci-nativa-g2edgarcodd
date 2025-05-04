@@ -106,6 +106,29 @@ class RegistroScreen extends StatelessWidget {
               ),
             ),
           ),
+          // Botón de volver en la esquina superior izquierda
+          Positioned(
+            top: 20,
+            left: 20,
+            child: ElevatedButton.icon(
+              icon: Icon(Icons.arrow_back, color: Colors.black),
+              label: Text("Volver", style: TextStyle(color: Colors.black)),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => PaginaInicio()),
+                  (route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFFCB500),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 3,
+              ),
+            ),
+          ),
           // Contenido del formulario
           Center(
             child: Container(

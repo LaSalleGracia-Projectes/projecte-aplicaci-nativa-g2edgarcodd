@@ -252,9 +252,16 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           usuario: usuarioController.text,
                           correo: correoController.text,
                           password: passwordController.text,
+                          token: widget.token ?? "87|BfT1KjqacBx2PDsVV757re16NawnUvvrQE3N1gtu3fe957e6",
+                          userId: widget.userId ?? 4,
                         ),
                       ),
-                    );
+                    ).then((actualizado) {
+                      if (actualizado == true) {
+                        // Recargar los datos del usuario si se actualizaron
+                        _loadUserData();
+                      }
+                    });
                   }),
                   SizedBox(width: 20),
                   buildButton("Volver", Colors.red, Colors.white, () {

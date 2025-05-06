@@ -306,15 +306,16 @@ class _InfoPeliculasViewState extends State<InfoPeliculasView> {
 
   Future<String> _getUsername() async {
     try {
-      final response = await http.post(
-        Uri.parse('http://25.17.74.119:8000/api/getUser'),
+      // Token de autenticación actualizado
+      String token = "87|BfT1KjqacBx2PDsVV757re16NawnUvvrQE3N1gtu3fe957e6";
+      
+      final response = await http.get(
+        Uri.parse('http://25.17.74.119:8000/api/getUser?user_id=4'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
         },
-        body: json.encode({
-          'user_id': 1
-        }),
       );
 
       if (response.statusCode == 200) {
@@ -433,8 +434,8 @@ class _InfoPeliculasViewState extends State<InfoPeliculasView> {
                   final reviewBody = _bodyController.text;
                   final username = await _getUsername();
                   
-                  // Token de autenticación
-                  String token = "14|AZR75fejNkawmO8bMm87SPdl0Df5t98YSCTlvIrze968f75a";
+                  // Token de autenticación actualizado
+                  String token = "87|BfT1KjqacBx2PDsVV757re16NawnUvvrQE3N1gtu3fe957e6";
                   
                   final response = await http.post(
                     Uri.parse('http://25.17.74.119:8000/api/createReview'),
@@ -447,7 +448,7 @@ class _InfoPeliculasViewState extends State<InfoPeliculasView> {
                       'title': reviewTitle,
                       'body': reviewBody,
                       'is_positive': _isPositive,
-                      'user_id': 1,
+                      'user_id': 4, // ID de usuario actualizado
                       'movie_id': widget.movie.id.toString(),
                     }),
                   );

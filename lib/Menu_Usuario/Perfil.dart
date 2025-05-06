@@ -7,8 +7,9 @@ import 'package:http/http.dart' as http;
 
 class PerfilScreen extends StatefulWidget {
   final String? token;
+  final int? userId;
   
-  PerfilScreen({this.token});
+  PerfilScreen({this.token, this.userId});
 
   @override
   _PerfilScreenState createState() => _PerfilScreenState();
@@ -30,27 +31,28 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 
   Future<void> _loadUserData() async {
+    setState(() => _isLoading = true);
+    
     try {
-      String token = widget.token ?? "11|Gt4FFtLcWsOY61ImE3Bbd6J9IMF2TFtHPDOjKLVtea3cbeca";
+      // Usar el token proporcionado
+      final token = "87|BfT1KjqacBx2PDsVV757re16NawnUvvrQE3N1gtu3fe957e6";
+      final userId = 4; // Usar el ID de ejemplo proporcionado
       
-      print('Iniciando petición al servidor...');
-      print('Token usado: $token');
+      print('Iniciando petición con token: $token');
+      print('User ID: $userId');
 
-      final response = await http.post(
-        Uri.parse('http://25.17.74.119:8000/api/getUser'),
+      // Cambiar a método GET con parámetros en la URL
+      final response = await http.get(
+        Uri.parse('http://25.17.74.119:8000/api/getUser?user_id=$userId'),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: json.encode({
-          'user_id': 1
-        }),
       );
-
-      print('URL de la petición: http://25.17.74.119:8000/api/getUser');
-      print('Código de estado: ${response.statusCode}');
-      print('Cuerpo de la respuesta: ${response.body}');
+      
+      print('Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);

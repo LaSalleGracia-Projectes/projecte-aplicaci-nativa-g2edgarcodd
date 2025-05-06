@@ -76,7 +76,7 @@ class MediaItem {
 class TMDBService {
   static const String apiKey = "fa4912f208d8c9000b8d8d009c28e2b5";
   static const String baseUrl = "https://api.themoviedb.org/3";
-  static const String imageBaseUrl = "https://image.tmdb.org/t/p/w500";
+  static const String imageBaseUrl = "https://image.tmdb.org/t/p/original";
   
   static const String token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmYTQ5MTJmMjA4ZDhjOTAwMGI4ZDhkMDA5YzI4ZTJiNSIsIm5iZiI6MTc0MzY5NTA2NS40ODcsInN1YiI6IjY3ZWVhY2Q5MTVmNmJhODZmMWUxYTcwMiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.yACTJlfSWaWUvtN7Iak36-gIqxlsh1JKzoFBa0hxNDU";
 
@@ -534,8 +534,8 @@ class _MenuState extends State<Menu> {
           child: Column(
             children: [
               // Carrusel
-              Container(
-                height: MediaQuery.of(context).size.height * 0.6,
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.53,
                 width: MediaQuery.of(context).size.width,
                 child: Container(
                   color: isDark ? Color(0xFF060D17) : Colors.white,
@@ -546,79 +546,77 @@ class _MenuState extends State<Menu> {
                       options: CarouselOptions(
                         autoPlay: true,
                         enlargeCenterPage: true,
-                        aspectRatio: 16 / 9,
-                        viewportFraction: 0.85,
-                        height: MediaQuery.of(context).size.height * 0.55,
+                        aspectRatio: 2/3,
+                        viewportFraction: 0.45,
+                        height: MediaQuery.of(context).size.height * 0.49,
+                        autoPlayCurve: Curves.easeInOut,
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        enlargeStrategy: CenterPageEnlargeStrategy.height,
+                        pauseAutoPlayOnTouch: true,
+                        enlargeFactor: 0.2,
                       ),
                       items: _items.map((item) {
                         return Builder(
                           builder: (BuildContext context) {
-                            double posterHeight = MediaQuery.of(context).size.height * 0.4;
-                            return Container(
-                              margin: EdgeInsets.all(5.0),
-                              decoration: BoxDecoration(
-                                color: isDark ? Color(0xFF060D17) : Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                            return SizedBox(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Expanded(
-                                    flex: 6,
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            item['titulo'] ?? '',
-                                            style: TextStyle(
-                                              color: isDark ? Color(0xFFF6F6F7) : Colors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Container(
-                                          height: posterHeight,
-                                          child: item['portada']!.isNotEmpty
-                                              ? Image.network(
-                                            item['portada']!,
-                                            fit: BoxFit.contain,
-                                            width: double.infinity,
-                                            errorBuilder: (context, error, stackTrace) =>
-                                                Icon(Icons.error, color: isDark ? Color(0xFFF6F6F7) : Colors.black),
-                                          )
-                                              : Icon(Icons.image, size: 50, color: isDark ? Color(0xFFF6F6F7) : Colors.black),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 4,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 30,
-                                            backgroundImage: NetworkImage(
-                                                'https://via.placeholder.com/100'),
-                                          ),
-                                          SizedBox(height: 10),
-                                          Text(
-                                            "Lorem Ipsum",
-                                            style: TextStyle(color: isDark ? Color(0xFFF6F6F7) : Colors.black, fontSize: 14),
+                                  Flexible(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: isDark ? Color(0xFF060D17) : Colors.white,
+                                        borderRadius: BorderRadius.circular(15),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: isDark ? Colors.black54 : Colors.black26,
+                                            blurRadius: 10,
+                                            offset: Offset(0, 5),
                                           ),
                                         ],
                                       ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: item['portada']!.isNotEmpty
+                                          ? Image.network(
+                                              item['portada']!,
+                                              fit: BoxFit.cover,
+                                              cacheHeight: 1200,
+                                              cacheWidth: 800,
+                                              loadingBuilder: (context, child, loadingProgress) {
+                                                if (loadingProgress == null) return child;
+                                                return Container(
+                                                  color: isDark ? Colors.black54 : Colors.grey[300],
+                                                  child: Center(
+                                                    child: CircularProgressIndicator(
+                                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                                        isDark ? Colors.white : Colors.blue,
+                                                      ),
+                                                      value: loadingProgress.expectedTotalBytes != null
+                                                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                                        : null,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              errorBuilder: (context, error, stackTrace) =>
+                                                Icon(Icons.error, color: isDark ? Color(0xFFF6F6F7) : Colors.black),
+                                            )
+                                          : Icon(Icons.image, size: 50, color: isDark ? Color(0xFFF6F6F7) : Colors.black),
+                                      ),
                                     ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    item['titulo'] ?? '',
+                                    style: TextStyle(
+                                      color: isDark ? Color(0xFFF6F6F7) : Colors.black,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
@@ -1171,14 +1169,19 @@ class _MenuState extends State<Menu> {
                           height: 120,
                           width: 150,
                           fit: BoxFit.cover,
+                          cacheHeight: 500,
+                          cacheWidth: 600,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Container(
                               height: 120,
                               width: 150,
-                              color: Colors.grey[800],
+                              color: isDark ? Colors.black54 : Colors.grey[300],
                               child: Center(
                                 child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    isDark ? Colors.white : Colors.blue,
+                                  ),
                                   value: loadingProgress.expectedTotalBytes != null
                                       ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                                       : null,
@@ -1344,14 +1347,19 @@ class _MenuState extends State<Menu> {
                           height: 180,
                           width: 160,
                           fit: BoxFit.cover,
+                          cacheHeight: 600,
+                          cacheWidth: 400,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Container(
                               height: 180,
                               width: 160,
-                              color: Colors.grey[800],
+                              color: isDark ? Colors.black54 : Colors.grey[300],
                               child: Center(
                                 child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    isDark ? Colors.white : Colors.blue,
+                                  ),
                                   value: loadingProgress.expectedTotalBytes != null
                                       ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                                       : null,

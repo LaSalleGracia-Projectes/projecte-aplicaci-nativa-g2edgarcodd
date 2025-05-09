@@ -5,6 +5,7 @@ class Review {
   final double rating;
   final String createdAt;
   final bool isPositive;
+  final int? review_id;
 
   Review({
     required this.author,
@@ -13,5 +14,6 @@ class Review {
     required this.rating,
     required this.createdAt,
     required this.isPositive,
+    this.review_id,
   });
 } 

@@ -1,3 +1,4 @@
+
 # StreamHub - Aplicación para compartir gustos cinematográficos
 
 ![StreamHub Logo](images/logo.png)

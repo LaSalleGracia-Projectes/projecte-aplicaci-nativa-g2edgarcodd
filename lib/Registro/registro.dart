@@ -87,16 +87,12 @@ class RegistroScreen extends StatelessWidget {
       // Verificación más robusta de la respuesta del servidor
       if (response.statusCode >= 200 && response.statusCode < 300 && responseData['success'] == true) {
         showMessage(context, responseData['message'] ?? "Registro exitoso", Colors.green);
-        
-        // Esperar un momento para que se muestre el mensaje de éxito y luego redirigir
-        Future.delayed(Duration(seconds: 1), () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginScreen(correo: email, password: password),
-            ),
-          );
-        });
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(correo: email, password: password),
+          ),
+        );
       } else {
         // Handle specific error messages from the API
         if (responseData.containsKey('errors')) {

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../main_view.dart';
 import '../theme_provider.dart';
+import '../language_provider.dart';
 import '../main.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ConfiguracionScreen extends StatefulWidget {
   @override
@@ -10,8 +13,6 @@ class ConfiguracionScreen extends StatefulWidget {
 
 class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTickerProviderStateMixin {
   bool _modoBlancoyNegro = false;
-  String _idiomaSeleccionado = 'Español';
-  final List<String> _idiomas = ['Español', 'Inglés', 'Catalán'];
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -39,36 +40,43 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context);
     
+    if (l10n == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Configuración',
+          l10n.settings,
           style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color(0xFF060D17),
+        backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: Container(
         width: screenSize.width,
         height: screenSize.height,
         decoration: BoxDecoration(
-          color: Color(0xFF060D17),
+          color: isDark ? Color(0xFF060D17) : Colors.white,
           image: DecorationImage(
-            image: AssetImage('images/streamhub.png'),
-            opacity: 0.05,
+            image: AssetImage('images/fondo2.png'),
+            opacity: isDark ? 0.05 : 0.1,
             fit: BoxFit.cover,
           ),
         ),
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.15),
+              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.08),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -77,8 +85,8 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                     animation: _animation,
                     builder: (context, child) {
                       return Container(
-                        height: 170,
-                        width: 170,
+                        height: 120,
+                        width: 120,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: LinearGradient(
@@ -89,85 +97,126 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                           boxShadow: [
                             BoxShadow(
                               color: Colors.blue.withOpacity(0.3),
-                              spreadRadius: 5 + (_animation.value * 5),
-                              blurRadius: 15,
+                              spreadRadius: 3 + (_animation.value * 3),
+                              blurRadius: 10,
                             ),
                           ],
                         ),
                         child: Icon(
                           Icons.settings,
-                          size: 80,
+                          size: 60,
                           color: Colors.white,
                         ),
                       );
                     },
                   ),
-                  SizedBox(height: 50),
-
-                  // Sección de Apariencia
-                  SwitchListTile(
-                    title: Text("Modo Oscuro"),
-                    value: themeProvider.isDarkMode,
-                    onChanged: (value) {
-                      themeProvider.toggleTheme();
-                    }
-                  ),
                   SizedBox(height: 25),
+
+                  // Sección de Apariencia con padding uniforme
+                  _buildSection(
+                    l10n.darkMode,
+                    Icons.brightness_6_outlined,
+                    [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.darkMode,
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white : Colors.black,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  l10n.darkModeDescription,
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white70 : Colors.black54,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 5),
+                              child: Switch(
+                                value: themeProvider.isDarkMode,
+                                onChanged: (value) {
+                                  themeProvider.toggleTheme();
+                                },
+                                activeColor: Colors.blue,
+                                activeTrackColor: Colors.blue.withOpacity(0.3),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 15),
 
                   // Sección de Idioma
                   _buildSection(
-                    'Idioma',
+                    l10n.language,
                     Icons.language_outlined,
                     [
                       Padding(
-                        padding: EdgeInsets.all(20),
+                        padding: EdgeInsets.all(12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Selecciona tu idioma preferido',
+                              l10n.selectLanguage,
                               style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            SizedBox(height: 15),
+                            SizedBox(height: 10),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 3),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(10),
                                 gradient: LinearGradient(
-                                  colors: [
+                                  colors: isDark ? [
                                     Colors.white.withOpacity(0.1),
                                     Colors.white.withOpacity(0.05),
+                                  ] : [
+                                    Colors.grey.withOpacity(0.1),
+                                    Colors.grey.withOpacity(0.05),
                                   ],
                                 ),
-                                border: Border.all(color: Colors.white24),
+                                border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
                               ),
                               child: DropdownButton<String>(
-                                value: _idiomaSeleccionado,
-                                dropdownColor: Color(0xFF060D17),
+                                value: languageProvider.currentLanguageName,
+                                dropdownColor: isDark ? Color(0xFF060D17) : Colors.white,
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
+                                  color: isDark ? Colors.white : Colors.black,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                icon: Icon(Icons.arrow_drop_down, color: Colors.white, size: 30),
+                                icon: Icon(Icons.arrow_drop_down, color: isDark ? Colors.white : Colors.black, size: 24),
                                 isExpanded: true,
                                 underline: Container(),
                                 onChanged: (String? newValue) {
                                   if (newValue != null) {
-                                    setState(() {
-                                      _idiomaSeleccionado = newValue;
-                                    });
+                                    final newLanguageCode = languageProvider.getLanguageCode(newValue);
+                                    languageProvider.changeLanguage(newLanguageCode);
                                     _mostrarMensaje(
                                       'Idioma cambiado a $newValue',
                                       Colors.blue,
                                     );
                                   }
                                 },
-                                items: _idiomas.map<DropdownMenuItem<String>>((String value) {
+                                items: languageProvider.availableLanguageNames.map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -180,17 +229,17 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                       ),
                     ],
                   ),
-                  SizedBox(height: 25),
+                  SizedBox(height: 15),
 
                   // Sección de Cuenta
                   _buildSection(
-                    'Cuenta',
+                    l10n.account,
                     Icons.account_circle_outlined,
                     [
                       Padding(
-                        padding: EdgeInsets.all(20),
+                        padding: EdgeInsets.all(12),
                         child: _buildButton(
-                          'Cerrar Sesión',
+                          l10n.logout,
                           Icons.exit_to_app,
                           Colors.red.shade600,
                           () {
@@ -198,42 +247,42 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  backgroundColor: Color(0xFF060D17),
+                                  backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
                                   title: Row(
                                     children: [
-                                      Icon(Icons.warning_amber_rounded, color: Colors.red, size: 28),
-                                      SizedBox(width: 10),
-                                      Text('Cerrar Sesión',
-                                          style: TextStyle(color: Colors.white)),
+                                      Icon(Icons.warning_amber_rounded, color: Colors.red, size: 22),
+                                      SizedBox(width: 8),
+                                      Text(l10n.logout,
+                                          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16)),
                                     ],
                                   ),
                                   content: Text(
-                                    '¿Estás seguro de que quieres cerrar sesión?',
-                                    style: TextStyle(color: Colors.white70),
+                                    l10n.logoutConfirm,
+                                    style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 14),
                                   ),
                                   actions: [
                                     TextButton(
-                                      child: Text('Cancelar',
-                                          style: TextStyle(color: Colors.white70)),
+                                      child: Text(l10n.cancel,
+                                          style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 14)),
                                       onPressed: () => Navigator.pop(context),
                                     ),
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red.shade600,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                       ),
-                                      child: Text('Cerrar Sesión',
-                                          style: TextStyle(color: Colors.white)),
+                                      child: Text(l10n.logout,
+                                          style: TextStyle(color: Colors.white, fontSize: 14)),
                                       onPressed: () {
                                         Navigator.pushAndRemoveUntil(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => HomePage()),
+                                              builder: (context) => PaginaInicio()),
                                           (route) => false,
                                         );
                                       },
@@ -247,7 +296,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 15),
                 ],
               ),
             ),
@@ -258,47 +307,53 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
   }
 
   Widget _buildSection(String title, IconData icon, List<Widget> children) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(15),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
+          colors: isDark ? [
             Colors.white.withOpacity(0.1),
             Colors.white.withOpacity(0.05),
+          ] : [
+            Colors.grey.withOpacity(0.1),
+            Colors.grey.withOpacity(0.05),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 10,
-            offset: Offset(0, 5),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.1),
+            blurRadius: 8,
+            offset: Offset(0, 3),
           ),
         ],
       ),
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.blue.shade900, Colors.blue.shade800],
               ),
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
               ),
             ),
             child: Row(
               children: [
-                Icon(icon, color: Colors.white, size: 24),
-                SizedBox(width: 15),
+                Icon(icon, color: Colors.white, size: 18),
+                SizedBox(width: 10),
                 Text(
                   title,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -306,51 +361,6 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
             ),
           ),
           ...children,
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSwitchOption(
-    String title,
-    String subtitle,
-    bool value,
-    Function(bool) onChanged,
-  ) {
-    return Padding(
-      padding: EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeColor: Colors.blue,
-            activeTrackColor: Colors.blue.withOpacity(0.3),
-          ),
         ],
       ),
     );
@@ -364,23 +374,23 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
   ) {
     return Container(
       width: double.infinity,
-      height: 55,
+      height: 40,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.3),
-            blurRadius: 8,
-            offset: Offset(0, 4),
+            blurRadius: 5,
+            offset: Offset(0, 2),
           ),
         ],
       ),
       child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white, size: 24),
+        icon: Icon(icon, color: Colors.white, size: 18),
         label: Text(
           text,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -388,7 +398,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(10),
           ),
           elevation: 0,
         ),
@@ -402,13 +412,13 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.info_outline, color: Colors.white),
-            SizedBox(width: 10),
+            Icon(Icons.info_outline, color: Colors.white, size: 16),
+            SizedBox(width: 8),
             Text(
               mensaje,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -417,9 +427,9 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> with SingleTi
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
         ),
-        margin: EdgeInsets.all(20),
+        margin: EdgeInsets.all(12),
         duration: Duration(seconds: 3),
         elevation: 4,
       ),

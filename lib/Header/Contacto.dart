@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../theme_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ContactoScreen extends StatefulWidget {
   @override
@@ -40,7 +43,6 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
 
   void _enviarFormulario() {
     if (_formKey.currentState!.validate()) {
-      // Aquí iría la lógica para enviar el formulario
       _mostrarMensaje('¡Mensaje enviado con éxito!', Colors.green);
       _formKey.currentState!.reset();
       _nombreController.clear();
@@ -53,39 +55,35 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Contacto',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Color(0xFF060D17),
+        title: Text(l10n.contact, style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 24)),
+        backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
       body: Container(
         width: screenSize.width,
         height: screenSize.height,
         decoration: BoxDecoration(
-          color: Color(0xFF060D17),
+          color: isDark ? Color(0xFF060D17) : Colors.white,
           image: DecorationImage(
             image: AssetImage('images/fondo2.png'),
-            opacity: 0.05,
+            opacity: isDark ? 0.10 : 0.15,
             fit: BoxFit.cover,
           ),
         ),
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.25),
+              padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.10),
               child: Column(
                 children: [
-                  // Icono animado de contacto
+                  // Ícono animado más grande
                   AnimatedBuilder(
                     animation: _animation,
                     builder: (context, child) {
@@ -103,21 +101,17 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                           boxShadow: [
                             BoxShadow(
                               color: Colors.blue.withOpacity(0.3),
-                              spreadRadius: 3 + (_animation.value * 3),
+                              spreadRadius: 2 + (_animation.value * 3),
                               blurRadius: 10,
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.contact_mail,
-                          size: 50,
-                          color: Colors.white,
-                        ),
+                        child: Icon(Icons.contact_mail, size: 60, color: Colors.white),
                       );
                     },
                   ),
 
-                  // Formulario
+                  // Formulario más grande
                   Container(
                     padding: EdgeInsets.all(25),
                     decoration: BoxDecoration(
@@ -125,14 +119,17 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [
-                          Colors.white.withOpacity(0.1),
-                          Colors.white.withOpacity(0.05),
+                        colors: isDark ? [
+                          Colors.white.withOpacity(0.12),
+                          Colors.white.withOpacity(0.07),
+                        ] : [
+                          Colors.grey.withOpacity(0.12),
+                          Colors.grey.withOpacity(0.07),
                         ],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withOpacity(isDark ? 0.2 : 0.1),
                           blurRadius: 10,
                           offset: Offset(0, 5),
                         ),
@@ -141,167 +138,47 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                     child: Form(
                       key: _formKey,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '¡Contáctanos!',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Completa el formulario y nos pondremos en contacto contigo lo antes posible.',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                            ),
+                          _buildTextField(
+                            controller: _nombreController,
+                            label: l10n.user,
+                            icon: Icons.person,
                           ),
                           SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _nombreController,
-                                  label: 'Nombre',
-                                  icon: Icons.person,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Requerido';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: TextEditingController(),
-                                  label: 'Apellidos',
-                                  icon: Icons.person_outline,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Requerido';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
+                          _buildTextField(
+                            controller: _emailController,
+                            label: l10n.yourEmail,
+                            icon: Icons.email,
+                            keyboardType: TextInputType.emailAddress,
                           ),
-                          SizedBox(height: 15),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: _emailController,
-                                  label: 'Correo electrónico',
-                                  icon: Icons.email,
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Requerido';
-                                    }
-                                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                                      return 'Email inválido';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              Expanded(
-                                child: _buildTextField(
-                                  controller: TextEditingController(),
-                                  label: 'Teléfono',
-                                  icon: Icons.phone,
-                                  keyboardType: TextInputType.phone,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Requerido';
-                                    }
-                                    if (!RegExp(r'^\+?[\d\s-]+$').hasMatch(value)) {
-                                      return 'Teléfono inválido';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
+                          SizedBox(height: 20),
                           _buildTextField(
                             controller: _asuntoController,
-                            label: 'Asunto',
+                            label: l10n.selectFilters,
                             icon: Icons.subject,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor, ingresa el asunto';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 15),
-                          _buildTextField(
-                            controller: _mensajeController,
-                            label: 'Mensaje',
-                            icon: Icons.message,
-                            maxLines: 4,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor, ingresa tu mensaje';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 15),
-                          // Dropdown para tipo de consulta
-                          DropdownButtonFormField<String>(
-                            value: 'Consulta general',
-                            items: [
-                              'Consulta general',
-                              'Soporte técnico',
-                              'Ventas',
-                              'Facturación',
-                              'Otros'
-                            ].map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (value) {},
-                            style: TextStyle(color: Colors.white),
-                            dropdownColor: Color(0xFF060D17),
-                            decoration: InputDecoration(
-                              labelText: 'Tipo de consulta',
-                              labelStyle: TextStyle(color: Colors.white70),
-                              prefixIcon: Icon(Icons.category, color: Colors.white70),
-                              filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide.none,
-                              ),
-                            ),
                           ),
                           SizedBox(height: 20),
+                          _buildTextField(
+                            controller: _mensajeController,
+                            label: l10n.reviews,
+                            icon: Icons.message,
+                            maxLines: 5,
+                          ),
+                          SizedBox(height: 30),
                           Row(
                             children: [
                               Expanded(
                                 child: _buildButton(
-                                  'Cancelar',
+                                  l10n.cancel,
                                   Icons.close,
                                   Colors.red.shade400,
-                                      () => Navigator.pop(context),
+                                  () => Navigator.pop(context),
                                 ),
                               ),
                               SizedBox(width: 15),
                               Expanded(
                                 child: _buildButton(
-                                  'Enviar',
+                                  l10n.subscribe,
                                   Icons.send,
                                   Colors.blue.shade600,
                                   _enviarFormulario,
@@ -313,7 +190,7 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 25),
                 ],
               ),
             ),
@@ -329,107 +206,103 @@ class _ContactoScreenState extends State<ContactoScreen> with SingleTickerProvid
     required IconData icon,
     TextInputType keyboardType = TextInputType.text,
     int maxLines = 1,
-    required String? Function(String?) validator,
   }) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    final l10n = AppLocalizations.of(context)!;
+    
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       maxLines: maxLines,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.white70),
-        prefixIcon: Icon(icon, color: Colors.white70),
+        labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 16),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
-        border: OutlineInputBorder(
+        fillColor: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+        prefixIcon: Icon(icon, color: isDark ? Colors.white70 : Colors.black54),
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.black12),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.blue, width: 2),
+          borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 2),
         ),
-        errorStyle: TextStyle(color: Colors.red.shade300),
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+        errorStyle: TextStyle(color: Colors.red.shade400, fontSize: 12),
       ),
-      validator: validator,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return l10n.errorLoadingNews;
+        }
+        if (label == l10n.yourEmail && !_isValidEmail(value)) {
+          return l10n.errorLoadingNews;
+        }
+        return null;
+      },
     );
   }
 
-  Widget _buildButton(
-      String text,
-      IconData icon,
-      Color color,
-      VoidCallback onPressed,
-      ) {
-    return Container(
-      height: 45,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 8,
-            offset: Offset(0, 4),
+  Widget _buildButton(String text, IconData icon, Color color, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        elevation: 3,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: Colors.white, size: 20),
+          SizedBox(width: 8),
+          Text(
+            text,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
-      ),
-      child: ElevatedButton.icon(
-        icon: Icon(icon, color: Colors.white, size: 20),
-        label: Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          elevation: 0,
-        ),
-        onPressed: onPressed,
       ),
     );
   }
 
   void _mostrarMensaje(String mensaje, Color color) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isDark = themeProvider.isDarkMode;
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.info_outline, color: Colors.white),
-            SizedBox(width: 10),
-            Text(
-              mensaje,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        content: Text(
+          mensaje,
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(10),
         ),
-        margin: EdgeInsets.all(20),
+        margin: EdgeInsets.all(10),
         duration: Duration(seconds: 3),
-        elevation: 4,
       ),
     );
+  }
+
+  bool _isValidEmail(String email) {
+    // Implementa la lógica para validar el formato del correo electrónico
+    return true; // Placeholder, actual implementación necesaria
   }
 }

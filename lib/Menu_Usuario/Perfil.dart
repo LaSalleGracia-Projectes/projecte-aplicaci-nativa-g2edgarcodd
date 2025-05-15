@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../theme_provider.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../auth_service.dart';
 
 class PerfilScreen extends StatefulWidget {
   final String? token;
@@ -23,10 +24,18 @@ class _PerfilScreenState extends State<PerfilScreen> {
   final TextEditingController passwordController = TextEditingController();
   bool _passwordVisible = false;
   bool _isLoading = true;
+  String? _token;
+  int? _userId;
 
   @override
   void initState() {
     super.initState();
+    _token = widget.token ?? AuthService().token;
+    _userId = widget.userId ?? AuthService().userId;
+    
+    print('Token en perfil: $_token');
+    print('User ID en perfil: $_userId');
+    
     _loadUserData();
   }
 
@@ -34,47 +43,69 @@ class _PerfilScreenState extends State<PerfilScreen> {
     setState(() => _isLoading = true);
     
     try {
-      // Usar el token proporcionado
-      final token = "87|BfT1KjqacBx2PDsVV757re16NawnUvvrQE3N1gtu3fe957e6";
-      final userId = 4; // Usar el ID de ejemplo proporcionado
+      if (_token == null) {
+        showMessage('No hay sesión activa', Colors.red);
+        setState(() => _isLoading = false);
+        return;
+      }
       
-      print('Iniciando petición con token: $token');
-      print('User ID: $userId');
-
-      // Cambiar a método GET con parámetros en la URL
-      final response = await http.get(
-        Uri.parse('http://25.17.74.119:8000/api/getUser?user_id=$userId'),
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      print('Iniciando petición con token: $_token');
       
-      print('Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
+      final userData = await AuthService().getUserData();
+      
+      if (userData != null) {
+        setState(() {
+          nombreController.text = userData['name'] ?? '';
+          apellidoController.text = userData['surname'] ?? '';
+          usuarioController.text = userData['username'] ?? '';
+          correoController.text = userData['email'] ?? '';
+          if (_userId == null && userData['id'] != null) {
+            _userId = userData['id'];
+          }
+          _isLoading = false;
+        });
+        print('Datos de usuario cargados exitosamente desde AuthService');
+        return;
+      }
+      
+      if (_userId != null) {
+        final response = await http.get(
+          Uri.parse('http://25.17.74.119:8000/api/getUser?user_id=$_userId'),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $_token',
+          },
+        );
         
-        if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
-          final userData = jsonResponse['data'];
-          setState(() {
-            nombreController.text = userData['name'] ?? '';
-            apellidoController.text = userData['surname'] ?? '';
-            usuarioController.text = userData['username'] ?? '';
-            correoController.text = userData['email'] ?? '';
-            _isLoading = false;
-          });
-          print('Datos de usuario cargados exitosamente');
+        print('Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body);
+          
+          if (jsonResponse['success'] == true && jsonResponse['data'] != null) {
+            final userData = jsonResponse['data'];
+            setState(() {
+              nombreController.text = userData['name'] ?? '';
+              apellidoController.text = userData['surname'] ?? '';
+              usuarioController.text = userData['username'] ?? '';
+              correoController.text = userData['email'] ?? '';
+              _isLoading = false;
+            });
+            print('Datos de usuario cargados exitosamente con user_id');
+          } else {
+            throw Exception('La respuesta no tiene el formato esperado');
+          }
         } else {
-          throw Exception('La respuesta no tiene el formato esperado');
+          print('Error en la respuesta: ${response.statusCode}');
+          print('Mensaje de error: ${response.body}');
+          setState(() => _isLoading = false);
+          showMessage('Error al cargar los datos del usuario: ${response.statusCode}', Colors.red);
         }
       } else {
-        print('Error en la respuesta: ${response.statusCode}');
-        print('Mensaje de error: ${response.body}');
         setState(() => _isLoading = false);
-        showMessage('Error al cargar los datos del usuario: ${response.statusCode}', Colors.red);
+        showMessage('No se pudo identificar al usuario', Colors.red);
       }
     } catch (e) {
       print('Error en _loadUserData: $e');
@@ -252,13 +283,12 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           usuario: usuarioController.text,
                           correo: correoController.text,
                           password: passwordController.text,
-                          token: widget.token ?? "87|BfT1KjqacBx2PDsVV757re16NawnUvvrQE3N1gtu3fe957e6",
-                          userId: widget.userId ?? 4,
+                          token: _token,
+                          userId: _userId,
                         ),
                       ),
                     ).then((actualizado) {
                       if (actualizado == true) {
-                        // Recargar los datos del usuario si se actualizaron
                         _loadUserData();
                       }
                     });

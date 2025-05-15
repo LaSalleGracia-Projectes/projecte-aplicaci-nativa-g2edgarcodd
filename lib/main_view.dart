@@ -18,6 +18,7 @@ import 'package:projecte_aplicaci_nativa_g2edgarcodd/Secciones/series.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mongo;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'auth_service.dart';
 
 // Clase para almacenar datos de películas/series de TMDB
 class MediaItem {
@@ -182,6 +183,7 @@ class _MenuState extends State<Menu> {
   List<Map<String, String>> _items = []; // Lista para los elementos del carrusel
   bool _isLoading = true;
   String _selectedFilter = 'Todo';
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -423,82 +425,37 @@ class _MenuState extends State<Menu> {
                 leading: Icon(Icons.person, color: isDark ? Colors.white : Colors.black87),
                 title: Text(l10n.profile, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
                 onTap: () {
-                  if (widget.isGuest) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: isDark ? Color(0xFF060D17) : Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          title: Row(
-                            children: [
-                              Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 22),
-                              SizedBox(width: 8),
-                              Text("Registro/Login Necesario",
-                                  style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16)),
-                            ],
-                          ),
-                          content: Text(
-                            "Para acceder a esta función necesitas registrarte o iniciar sesión.",
-                            style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 14),
-                          ),
-                          actions: [
-                            TextButton(
-                              child: Text("Registrarse",
-                                  style: TextStyle(color: Colors.blue, fontSize: 14)),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => RegistroScreen()),
-                                );
-                              },
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.orange,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Text("Iniciar Sesión",
-                                  style: TextStyle(color: Colors.white, fontSize: 14)),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => LoginScreen(correo: '', password: '')),
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    try {
-                      final token = "11|Gt4FFtLcWsOY61ImE3Bbd6J9IMF2TFtHPDOjKLVtea3cbeca";
+                  Navigator.pop(context); // Cerrar el drawer
+                  try {
+                    // Usar el token del AuthService
+                    final token = AuthService().token;
+                    
+                    if (token != null) {
                       print('Navegando a perfil con token: $token');
                       
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PerfilScreen(
-                            token: token,
-                          ),
+                          builder: (context) => PerfilScreen(),
                         ),
                       );
-                    } catch (e) {
-                      print('Error al navegar al perfil: $e');
+                    } else {
+                      // No hay token, mostrar mensaje
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Error al cargar el perfil: $e'),
-                          backgroundColor: Colors.red,
+                          content: Text('Debes iniciar sesión para ver tu perfil'),
+                          backgroundColor: Colors.orange,
                         ),
                       );
                     }
+                  } catch (e) {
+                    print('Error al navegar al perfil: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error al cargar el perfil: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
                   }
                 },
               ),
@@ -516,6 +473,10 @@ class _MenuState extends State<Menu> {
                 leading: Icon(Icons.exit_to_app, color: isDark ? Colors.white : Colors.black87),
                 title: Text(l10n.logout, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
                 onTap: () {
+                  // Limpiar el token del servicio de autenticación
+                  AuthService().logout();
+                  
+                  // Navegar a la página de inicio
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => PaginaInicio()),

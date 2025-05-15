@@ -6,6 +6,7 @@ import '/Registro/registro.dart'; // Agregar la importación de la vista de regi
 import '/Registro/restablecer_password.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../auth_service.dart'; // Importar el servicio de autenticación
 
 class LoginScreen extends StatefulWidget {
   final String correo;
@@ -194,6 +195,16 @@ class _LoginScreenState extends State<LoginScreen> {
           // Guardar el token de acceso
           final String accessToken = responseData['access_token'];
           final String tokenType = responseData['token_type'];
+          
+          // Guardar el token en el servicio de autenticación
+          AuthService().setToken(accessToken);
+          
+          // Opcional: también puedes guardar el ID si viene en la respuesta
+          if (responseData['user'] != null && responseData['user']['id'] != null) {
+            AuthService().setUserId(responseData['user']['id']);
+          }
+          
+          print('Token guardado: $accessToken');
           
           showMessage(responseData['message'], Colors.green);
           Navigator.pushAndRemoveUntil(
